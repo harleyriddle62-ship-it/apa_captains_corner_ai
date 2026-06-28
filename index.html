@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8" />
+		<title>APA Captain Brain – Mobile AutoSave</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<style>
+			:root {
+			  --bg: #05060a;
+			  --card: #111827;
+			  --accent: #22c55e;
+			  --accent-soft: #16a34a;
+			  --border: #1f2937;
+			  --text: #e5e7eb;
+			  --muted: #9ca3af;
+			}
+
+			* { box-sizing: border-box; }
+
+			body {
+			  margin:0;
+			  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			  background: var(--bg);
+			  color: var(--text);
+			}
+
+			header {
+			  padding:16px 14px 8px;
+			  border-bottom:1px solid var(--border);
+			  background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+			}
+
+			header h1 {
+			  margin:0;
+			  font-size:22px;
+			}
+
+			header p {
+			  margin:4px 0 0;
+			  font-size:13px;
+			  color:var(--muted);
+			}
+
+			main {
+			  padding:10px;
+			  max-width:900px;
+			  margin:0 auto;
+			}
+
+			.card {
+			  background:var(--card);
+			  border-radius:12px;
+			  padding:12px 12px 10px;
+			  margin-bottom:10px;
+			  border:1px solid var(--border);
+			  box-shadow:0 10px 25px rgba(0,0,0,0.45);
+			}
+
+			.card h2 {
+			  margin:0 0 6px;
+			  font-size:16px;
+			}
+
+			.card small {
+			  display:block;
+			  margin-bottom:6px;
+			  font-size:11px;
+			  color:var(--muted);
+			}
+
+			label {
+			  display:block;
+			  font-size:12px;
+			  margin-top:6px;
+			  color:var(--muted);
+			}
+
+			input, button, textarea {
+			  width:100%;
+			  margin-top:3px;
+			  padding:7px 8px;
+			  font-size:13px;
+			  border-radius:8px;
+			  border:1px solid #374151;
+			  background:#020617;
+			  color:var(--text);
+			}
+
+			input:focus, textarea:focus {
+			  outline:none;
+			  border-color:var(--accent);
+			  box-shadow:0 0 0 1px rgba(34,197,94,0.4);
+			}
+
+			button {
+			  margin-top:8px;
+			  background:var(--accent);
+			  border-color:var(--accent-soft);
+			  color:#022c22;
+			  font-weight:600;
+			  cursor:pointer;
+			}
+
+			button:active {
+			  transform:scale(0.98);
+			  background:var(--accent-soft);
+			}
+
+			pre, textarea {
+			  margin-top:8px;
+			  background:#020617;
+			  border-radius:8px;
+			  border:1px solid #1f2937;
+			  padding:8px;
+			  font-size:11px;
+			  line-height:1.4;
+			  color:var(--muted);
+			}
+
+			textarea {
+			  min-height:140px;
+			  resize:vertical;
+			}
+
+			.grid-2 {
+			  display:grid;
+			  grid-template-columns:1fr;
+			  gap:10px;
+			}
+
+			@media (min-width:720px) {
+			  .grid-2 {
+			    grid-template-columns:1fr 1fr;
+			  }
+			}
+
+			.pill {
+			  display:inline-block;
+			  padding:2px 8px;
+			  border-radius:999px;
+			  background:#022c22;
+			  color:var(--accent);
+			  font-size:11px;
+			  margin-top:4px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<header>
+			<h1>APA Captain Brain</h1>
+			<p>Mobile‑first captain analytics with auto‑save.</p>
+		</header>
+
+		<main>
+			<div class="grid-2">
+				<!-- LEFT COLUMN -->
+				<div>
+					<div class="card">
+						<h2>Your Team</h2>
+						<small>Add your players with SL and win%.</small>
+
+						<label
+							>Name
+							<input id="playerName" placeholder="Chris" />
+						</label>
+
+						<label
+							>Skill Level (2–7)
+							<input
+								id="playerSL"
+								type="number"
+								min="2"
+								max="7"
+								placeholder="5"
+							/>
+						</label>
+
+						<label
+							>Win% (0–100)
+							<input
+								id="playerWin"
+								type="number"
+								min="0"
+								max="100"
+								placeholder="60"
+							/>
+						</label>
+
+						<button onclick="addPlayer()">Add Player</button>
+						<pre id="yourPlayersView"></pre>
+					</div>
+
+					<div class="card">
+						<h2>Opponent Team</h2>
+						<small>Add opponent players to seed behavior.</small>
+
+						<label
+							>Opponent Team Name
+							<input id="oppTeamName" value="WWBD" />
+						</label>
+
+						<label
+							>Name
+							<input id="oppName" placeholder="Jordan" />
+						</label>
+
+						<label
+							>Skill Level (2–7)
+							<input
+								id="oppSL"
+								type="number"
+								min="2"
+								max="7"
+								placeholder="6"
+							/>
+						</label>
+
+						<label
+							>Win% (0–100)
+							<input
+								id="oppWin"
+								type="number"
+								min="0"
+								max="100"
+								placeholder="55"
+							/>
+						</label>
+
+						<button onclick="addOpp()">Add Opponent Player</button>
+						<pre id="oppPlayersView"></pre>
+					</div>
+
+					<div class="card">
+						<h2>Captain Overrides</h2>
+						<small
+							>Simulate an override to feed
+							intuition/personality/mastery.</small
+						>
+
+						<button onclick="simulateOverride()">
+							Record Sample Override
+						</button>
+						<pre id="overrideView"></pre>
+					</div>
+				</div>
+
+				<!-- RIGHT COLUMN -->
+				<div>
+					<div class="card">
+						<h2>Run Captain Brain</h2>
+						<span class="pill">Auto‑Save Enabled</span>
+						<small>Tap once to compute all metrics.</small>
+
+						<button onclick="runEverything()">
+							Run Full System
+						</button>
+						<textarea
+							id="everythingOutput"
+							placeholder="Report will appear here..."
+						></textarea>
+					</div>
+
+					<div class="card">
+						<h2>Raw Captain Brain JSON</h2>
+						<small>For exporting or nerd mode.</small>
+
+						<textarea
+							id="brainRaw"
+							placeholder="Internal state will appear here..."
+						></textarea>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<script>
+/* ============================================================
+   AUTO‑SAVE + AUTO‑LOAD SYSTEM
+   ============================================================ */
+
+function saveState() {
+  const data = {
+    yourTeam: state.yourTeam,
+    oppTeam: state.oppTeam,
+    behavior: state.behavior,
+    captainBrain: CaptainBrain
+  };
+  localStorage.setItem("APA_CAPTAIN_BRAIN_SAVE", JSON.stringify(data));
+}
+
+function loadState() {
+  const raw = localStorage.getItem("APA_CAPTAIN_BRAIN_SAVE");
+  if (!raw) return;
+
+  try {
+    const data = JSON.parse(raw);
+
+    state.yourTeam = data.yourTeam || [];
+    state.oppTeam = data.oppTeam || [];
+    state.behavior = data.behavior || state.behavior;
+
+    CaptainBrain.players = data.captainBrain.players || {};
+    CaptainBrain.opponent = data.captainBrain.opponent || {};
+    CaptainBrain.captain = data.captainBrain.captain || CaptainBrain.captain;
+
+    document.getElementById('yourPlayersView').innerText =
+      JSON.stringify(state.yourTeam, null, 2);
+
+    document.getElementById('oppPlayersView').innerText =
+      JSON.stringify(state.oppTeam, null, 2);
+
+    document.getElementById('overrideView').innerText =
+      JSON.stringify(state.behavior.captain.overrides, null, 2);
+
+  } catch (e) {
+    console.log("Load error:", e);
+  }
+}
+
+loadState();
+
+/* ============================================================
+   CORE DATA STRUCTURES
+   ============================================================ */
+
+const state = window.state || {
+  yourTeam: [],
+  oppTeam: [],
+  behavior: {
+    WWBD: {
+      results: {},
+      rounds: {},
+      usage: {}
+    },
+    captain: {
+      overrides: []
+    }
+  }
+};
+
+const CaptainBrain = window.CaptainBrain || {
+  players: {},
+  opponent: {},
+  captain: {
+    overrides: [],
+    intuition: 0,
+    personality: "",
+    evolution: 0,
+    mastery: 0
+  },
+  updatePlayer(name, metrics) {
+    this.players[name] = { ...(this.players[name] || {}), ...metrics };
+  },
+  updateOpponent(metrics) {
+    this.opponent = { ...(this.opponent || {}), ...metrics };
+  },
+  recordOverride(entry) {
+    this.captain.overrides.push(entry);
+  },
+  updateCaptain(metrics) {
+    this.captain = { ...(this.captain || {}), ...metrics };
+  }
+};
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+
+function getPlayers(team) {
+  return team === 'yourTeam' ? state.yourTeam : state.oppTeam;
+}
+
+function getBehaviorData() {
+  return state.behavior;
+}
+
+function matchupScore(ySL, oSL, yWinPct) {
+  const base = (yWinPct || 50) / 100;
+  const slDiff = oSL - ySL;
+  const adj = -slDiff * 0.05;
+  return Math.max(0, Math.min(1, base + adj));
+}
+
+/* ============================================================
+   UI FUNCTIONS
+   ============================================================ */
+
+function addPlayer() {
+  const name = document.getElementById('playerName').value.trim();
+  const sl = parseInt(document.getElementById('playerSL').value || '5', 10);
+  const win = parseFloat(document.getElementById('playerWin').value || '50');
+
+  if (!name) return;
+
+  state.yourTeam.push({ name, sl, win, played:false });
+
+  document.getElementById('yourPlayersView').innerText =
+    JSON.stringify(state.yourTeam, null, 2);
+
+  saveState();
+}
+
+function addOpp() {
+  const name = document.getElementById('oppName').value.trim();
+  const sl = parseInt(document.getElementById('oppSL').value || '5', 10);
+  const win = parseFloat(document.getElementById('oppWin').value || '50');
+
+  if (!name) return;
+
+  state.oppTeam.push({ name, sl, win, played:false });
+
+  document.getElementById('oppPlayersView').innerText =
+    JSON.stringify(state.oppTeam, null, 2);
+
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const beh = state.behavior[teamName];
+
+  beh.results[name] = {
+    name,
+    wins: Math.round(win/10),
+    losses: Math.round((100-win)/10),
+    recent: ['win','loss','win'],
+    upsets: 1
+  };
+
+  saveState();
+}
+
+function simulateOverride() {
+  if (state.yourTeam.length < 2 || state.oppTeam.length < 1) return;
+
+  const yourRemaining = state.yourTeam;
+  const oppRemaining = state.oppTeam;
+
+  const dangerPlayer = oppRemaining[0];
+
+  let best = null;
+  let bestScore = -1;
+
+  yourRemaining.forEach(you => {
+    const s = matchupScore(you.sl, dangerPlayer.sl, you.win);
+    if (s > bestScore) {
+      bestScore = s;
+      best = you;
+    }
+  });
+
+  const overridePlayer = yourRemaining[1];
+  const overrideScore = matchupScore(
+    overridePlayer.sl,
+    dangerPlayer.sl,
+    overridePlayer.win
+  );
+
+  const entry = {
+    aiScore: bestScore,
+    overrideScore,
+    flowAligned: true,
+    stability: 0.6,
+    aiStability: 0.5,
+    clutch: 0.5,
+    aiClutch: 0.4,
+    hot: 0.6,
+    aiHot: 0.5
+  };
+
+  state.behavior.captain.overrides.push(entry);
+  CaptainBrain.recordOverride(entry);
+
+  document.getElementById('overrideView').innerText =
+    JSON.stringify(state.behavior.captain.overrides, null, 2);
+
+  saveState();
+}
+
+/* ============================================================
+   METRIC MODULES
+   ============================================================ */
+
+function calculateHotHand(player, oppRemaining, data) {
+  const rec = data.results[player.name] || {};
+  const recent = rec.recent || [];
+  const recentScore = recent.length
+    ? recent.filter(r => r === "win").length / recent.length
+    : (player.win || 50)/100;
+
+  let bestMatchup = 0;
+  oppRemaining.forEach(opp => {
+    const score = matchupScore(player.sl, opp.sl, player.win);
+    if (score > bestMatchup) bestMatchup = score;
+  });
+
+  const baseline = (player.win || 50)/100;
+  const overPerf = bestMatchup - baseline;
+  const confidenceSpike = Math.max(0, overPerf);
+
+  let volatility = 0.5;
+  if (recent.length >= 2) {
+    let alt = 0;
+    for (let i=1;i<recent.length;i++) {
+      if (recent[i] !== recent[i-1]) alt++;
+    }
+    volatility = alt/(recent.length-1);
+  }
+
+  const stabilityBoost = 1 - volatility;
+  const trend = recentScore - baseline;
+
+  const hot =
+    (recentScore * 0.40) +
+    (overPerf * 0.25) +
+    (confidenceSpike * 0.15) +
+    (stabilityBoost * 0.10) +
+    (trend * 0.10);
+
+  return { hot: Math.max(0, Math.min(1, hot)) };
+}
+
+function calculateClutch(player, oppRemaining, data) {
+  const rec = data.results[player.name] || {};
+  let lateRounds=0, lateWins=0;
+
+  [4,5].forEach(r=>{
+    if (data.rounds && data.rounds[r]) {
+      data.rounds[r].forEach(e=>{
+        if (e.name===player.name) {
+          lateRounds++;
+          if (rec.wins>0) lateWins++;
+        }
+      });
+    }
+  });
+
+  const latePct = lateRounds ? lateWins/lateRounds : (player.win||50)/100;
+
+  const totalMatches = (rec.wins||0)+(rec.losses||0);
+  const upsetScore = totalMatches ? (rec.upsets||0)/totalMatches : 0;
+
+  const pressureTrend = 0.1;
+
+  let bestMatchup=0;
+  oppRemaining.forEach(opp=>{
+    const s = matchupScore(player.sl, opp.sl, player.win);
+    if (s>bestMatchup) bestMatchup=s;
+  });
+
+  const confidence = bestMatchup;
+
+  let volatility = 0.5;
+  const recent = rec.recent||[];
+  if (recent.length>=2){
+    let alt=0;
+    for(let i=1;i<recent.length;i++){
+      if(recent[i]!==recent[i-1]) alt++;
+    }
+    volatility = alt/(recent.length-1);
+  }
+
+  const clutch =
+    (latePct * 0.45) +
+    (upsetScore * 0.25) +
+    (pressureTrend * 0.15) +
+    (confidence * 0.15) -
+    (volatility * 0.20);
+
+  return { clutch: Math.max(0, Math.min(1, clutch)) };
+}
+
+function calculateTrend(record, data) {
+  const total = (record.wins||0)+(record.losses||0);
+  const recent = record.recent||[];
+
+  const recentScore = recent.length
+    ? recent.filter(r=>r==="win").length/recent.length
+    : (record.wins||0)/(total||1);
+
+  let earlyRounds=0, earlyWins=0, lateRounds=0, lateWins=0;
+
+  [1,2].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        if(e.name===record.name){ earlyRounds++; if(record.wins>0) earlyWins++; }
+      });
+    }
+  });
+
+  [4,5].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        if(e.name===record.name){ lateRounds++; if(record.wins>0) lateWins++; }
+      });
+    }
+  });
+
+  const earlyPct = earlyRounds?earlyWins/earlyRounds:recentScore;
+  const latePct = lateRounds?lateWins/lateRounds:recentScore;
+
+  const trendScore = (recentScore*0.6)+((latePct-earlyPct)*0.4);
+
+  return { trend: trendScore };
+}
+
+function calculateVolatility(record) {
+  const recent = record.recent||[];
+  let alternation=0;
+
+  for(let i=1;i<recent.length;i++){
+    if(recent[i]!==recent[i-1]) alternation++;
+  }
+
+  const alternationScore = recent.length ? alternation/(recent.length-1) : 0.5;
+
+  return { volatility: alternationScore };
+}
+
+function calculateStability(player, oppRemaining, data) {
+  const consistency = (player.win||50)/100;
+
+  let fatigue=0;
+  const rec = data.results[player.name] || {};
+  const total = (rec.wins||0)+(rec.losses||0);
+
+  if(total>0){
+    let lateRounds=0, lateWins=0;
+
+    [4,5].forEach(r=>{
+      if(data.rounds && data.rounds[r]){
+        data.rounds[r].forEach(e=>{
+          if(e.name===player.name){
+            lateRounds++; if(rec.wins>0) lateWins++;
+          }
+        });
+      }
+    });
+
+    const latePct = lateRounds?lateWins/lateRounds:(rec.wins||0)/total;
+    fatigue = Math.max(0, (rec.wins||0)/total - latePct);
+  }
+
+  let bestMatchup=0;
+  oppRemaining.forEach(opp=>{
+    const s = matchupScore(player.sl, opp.sl, player.win);
+    if(s>bestMatchup) bestMatchup=s;
+  });
+
+  const confidence = (consistency*0.5)+(bestMatchup*0.5);
+
+  const recent = rec.recent||[];
+  const recentScore = recent.length
+    ? recent.filter(r=>r==="win").length/recent.length
+    : consistency;
+
+  const trend = recentScore-consistency;
+
+  let volatility=0.5;
+  if(recent.length>=2){
+    let alt=0;
+    for(let i=1;i<recent.length;i++){
+      if(recent[i]!==recent[i-1]) alt++;
+    }
+    volatility = alt/(recent.length-1);
+  }
+
+  const stability =
+    (consistency * 0.35) +
+    (confidence * 0.25) +
+    (Math.max(0, trend) * 0.15) -
+    (fatigue * 0.10) -
+    (volatility * 0.15);
+
+  return { stability: Math.max(0, Math.min(1, stability)) };
+}
+
+function calculateMomentum(data) {
+  let recent=[];
+  Object.values(data.results).forEach(r=>{
+    if(r.recent) recent = recent.concat(r.recent.slice(-5));
+  });
+
+  const recentScore = recent.length
+    ? recent.filter(r=>r==="win").length/recent.length
+    : 0.5;
+
+  let earlyRounds=0,earlyWins=0,lateRounds=0,lateWins=0;
+
+  [1,2].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        earlyRounds++; const rec=data.results[e.name];
+        if(rec && rec.wins>0) earlyWins++;
+      });
+    }
+  });
+
+  [4,5].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        lateRounds++; const rec=data.results[e.name];
+        if(rec && rec.wins>0) lateWins++;
+      });
+    }
+  });
+
+  const earlyPct = earlyRounds?earlyWins/earlyRounds:0.5;
+  const latePct = lateRounds?lateWins/lateRounds:0.5;
+
+  const roundMomentum = latePct-earlyPct;
+
+  let dangerActivation=0;
+  if(data.usage){
+    Object.entries(data.usage).forEach(([sl,count])=>{
+      if(parseInt(sl,10)>=5) dangerActivation+=count;
+    });
+  }
+
+  dangerActivation = Math.min(1, dangerActivation/10);
+
+  const trendReversal =
+    (earlyPct<latePct && recentScore<0.5) ||
+    (earlyPct>latePct && recentScore>0.5) ? 1:0;
+
+  const momentum =
+    (recentScore*0.5)+
+    (roundMomentum*0.3)+
+    (dangerActivation*0.15)+
+    (trendReversal*0.05);
+
+  return { momentum: Math.max(0, Math.min(1, momentum)) };
+}
+
+function calculateCollapse(data) {
+  let earlyRounds=0,earlyWins=0,lateRounds=0,lateWins=0;
+
+  [1,2].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        earlyRounds++; const rec=data.results[e.name];
+        if(rec && rec.wins>0) earlyWins++;
+      });
+    }
+  });
+
+  [4,5].forEach(r=>{
+    if(data.rounds && data.rounds[r]){
+      data.rounds[r].forEach(e=>{
+        lateRounds++; const rec=data.results[e.name];
+        if(rec && rec.wins>0) lateWins++;
+      });
+    }
+  });
+
+  const earlyPct = earlyRounds?earlyWins/earlyRounds:0.5;
+  const latePct = lateRounds?lateWins/lateRounds:0.5;
+
+  const momentumReversal = earlyPct-latePct;
+
+  let volatilitySum=0,volatilityCount=0;
+
+  Object.values(data.results).forEach(record=>{
+    const recent = record.recent||[];
+    if(recent.length>=2){
+      let alt=0;
+      for(let i=1;i<recent.length;i++){
+        if(recent[i]!==recent[i-1]) alt++;
+      }
+      const v = alt/(recent.length-1);
+      volatilitySum+=v; volatilityCount++;
+    }
+  });
+
+  const volatilitySpike = volatilityCount?volatilitySum/volatilityCount:0.5;
+
+  let dangerShutdown=0;
+  if(data.usage){
+    Object.entries(data.usage).forEach(([sl,count])=>{
+      if(parseInt(sl,10)>=5 && count===0) dangerShutdown+=1;
+    });
+  }
+
+  dangerShutdown = Math.min(1, dangerShutdown/3);
+
+  const deterioration = earlyPct-latePct;
+
+  let fatigueSum=0,fatigueCount=0;
+
+  Object.entries(data.results).forEach(([name,record])=>{
+    const total=(record.wins||0)+(record.losses||0);
+    if(total>0){
+      let lr=0,lw=0;
+      [4,5].forEach(r=>{
+        if(data.rounds && data.rounds[r]){
+          data.rounds[r].forEach(e=>{
+            if(e.name===name){
+              lr++; if(record.wins>0) lw++;
+            }
+          });
+        }
+      });
+      const lateP = lr?lw/lr:(record.wins||0)/total;
+      const fatigue = Math.max(0, (record.wins||0)/total - lateP);
+      fatigueSum+=fatigue; fatigueCount++;
+    }
+  });
+
+  const teamFatigue = fatigueCount?fatigueSum/fatigueCount:0;
+
+  const collapse =
+    (momentumReversal*0.35)+
+    (volatilitySpike*0.25)+
+    (dangerShutdown*0.15)+
+    (deterioration*0.15)+
+    (teamFatigue*0.10);
+
+  return { collapse: Math.max(0, Math.min(1, collapse)) };
+}
+
+/* ============================================================
+   CAPTAIN METRICS (Intuition, Personality, Evolution, Mastery)
+   ============================================================ */
+
+function calculateIntuition(overrides) {
+  if (!overrides.length) return { intuition: 0.5 };
+  let wins = 0;
+  overrides.forEach(o => {
+    if (o.overrideScore > o.aiScore) wins++;
+  });
+  return { intuition: wins / overrides.length };
+}
+
+function calculatePersonality(overrides) {
+  if (!overrides.length) return { personality: "Unknown" };
+
+  let bias = { flow: 0, stability: 0, clutch: 0, hot: 0, risky: 0 };
+
+  overrides.forEach(o => {
+    if (o.flowAligned) bias.flow++;
+    if (o.stability > o.aiStability) bias.stability++;
+    if (o.clutch > o.aiClutch) bias.clutch++;
+    if (o.hot > o.aiHot) bias.hot++;
+    if (o.overrideScore < o.aiScore) bias.risky++;
+  });
+
+  const total = overrides.length;
+  const flowBias = bias.flow / total;
+  const stabilityBias = bias.stability / total;
+  const clutchBias = bias.clutch / total;
+  const hotBias = bias.hot / total;
+  const riskBias = bias.risky / total;
+
+  let personality = "";
+  if (riskBias >= 0.40) personality = "The Gambler Captain";
+  else if (flowBias >= 0.40) personality = "The Flow Captain";
+  else if (stabilityBias >= 0.40) personality = "The Anchor Captain";
+  else if (clutchBias >= 0.40) personality = "The Clutch Captain";
+  else if (hotBias >= 0.40) personality = "The Momentum Captain";
+  else personality = "The Balanced Captain";
+
+  return { personality };
+}
+
+function calculateEvolution(overrides) {
+  if (!overrides.length) return { evolution: 0 };
+
+  const total = overrides.length;
+  const third = Math.floor(total / 3);
+
+  const early = overrides.slice(0, third);
+  const late = overrides.slice(third * 2);
+
+  function segAcc(seg) {
+    if (!seg.length) return 0.5;
+    let w = 0;
+    seg.forEach(o => {
+      if (o.overrideScore > o.aiScore) w++;
+    });
+    return w / seg.length;
+  }
+
+  const earlyAcc = segAcc(early);
+  const lateAcc = segAcc(late);
+
+  return { evolution: lateAcc - earlyAcc };
+}
+
+function calculateMastery(overrides) {
+  if (!overrides.length) return { mastery: 0 };
+
+  let wins = 0, risky = 0, flow = 0, stab = 0, clutch = 0, hot = 0;
+
+  overrides.forEach(o => {
+    if (o.overrideScore > o.aiScore) wins++;
+    if (o.overrideScore < o.aiScore) risky++;
+    if (o.flowAligned) flow++;
+    if (o.stability > o.aiStability) stab++;
+    if (o.clutch > o.aiClutch) clutch++;
+    if (o.hot > o.aiHot) hot++;
+  });
+
+  const total = overrides.length;
+
+  const intuition = wins / total;
+  const risk = risky / total;
+  const flowLoyalty = flow / total;
+  const stability = stab / total;
+  const clutchPref = clutch / total;
+  const hotPref = hot / total;
+
+  const third = Math.floor(total / 3);
+  const early = overrides.slice(0, third);
+  const late = overrides.slice(third * 2);
+
+  function segAcc(seg) {
+    if (!seg.length) return 0.5;
+    let w = 0;
+    seg.forEach(o => {
+      if (o.overrideScore > o.aiScore) w++;
+    });
+    return w / seg.length;
+  }
+
+  const evolution = segAcc(late) - segAcc(early);
+
+  const mastery =
+    (intuition * 0.30) +
+    ((1 - risk) * 0.15) +
+    (flowLoyalty * 0.10) +
+    (stability * 0.10) +
+    (clutchPref * 0.10) +
+    (hotPref * 0.10) +
+    (evolution * 0.15);
+
+  return { mastery: Math.max(0, Math.min(1, mastery)) };
+}
+
+/* ============================================================
+   BEHAVIOR SEEDING (Rounds + Usage)
+   ============================================================ */
+
+function seedRoundsAndUsage() {
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const beh = state.behavior[teamName];
+
+  beh.rounds = {1:[],2:[],3:[],4:[],5:[]};
+  beh.usage = {};
+
+  state.oppTeam.forEach((p, idx) => {
+    const r = (idx % 5) + 1;
+    beh.rounds[r].push({ name: p.name });
+    beh.usage[p.sl] = (beh.usage[p.sl] || 0) + 1;
+  });
+}
+
+/* ============================================================
+   MODULE RUNNERS (Hot‑Hand, Clutch, Trend, Volatility, Stability)
+   ============================================================ */
+
+function runHotHandModule() {
+  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
+  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+
+  yourRemaining.forEach(you => {
+    const m = calculateHotHand(you, oppRemaining, data);
+    CaptainBrain.updatePlayer(you.name, m);
+  });
+}
+
+function runClutchModule() {
+  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
+  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+
+  yourRemaining.forEach(you => {
+    const m = calculateClutch(you, oppRemaining, data);
+    CaptainBrain.updatePlayer(you.name, m);
+  });
+}
+
+function runTrendModule() {
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+
+  Object.entries(data.results).forEach(([name, record]) => {
+    const m = calculateTrend(record, data);
+    CaptainBrain.updatePlayer(name, m);
+  });
+}
+
+function runVolatilityModule() {
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+
+  Object.entries(data.results).forEach(([name, record]) => {
+    const m = calculateVolatility(record);
+    CaptainBrain.updatePlayer(name, m);
+  });
+}
+
+function runStabilityModule() {
+  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
+  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+
+  yourRemaining.forEach(you => {
+    const m = calculateStability(you, oppRemaining, data);
+    CaptainBrain.updatePlayer(you.name, m);
+  });
+}
+
+/* ============================================================
+   OPPONENT MODULES (Momentum + Collapse)
+   ============================================================ */
+
+function runMomentumModule() {
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+  const m = calculateMomentum(data);
+  CaptainBrain.updateOpponent(m);
+}
+
+function runCollapseModule() {
+  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
+  const data = getBehaviorData()[teamName];
+  const m = calculateCollapse(data);
+  CaptainBrain.updateOpponent(m);
+}
+
+/* ============================================================
+   CAPTAIN METRIC RUNNERS
+   ============================================================ */
+
+function runIntuitionModule() {
+  const m = calculateIntuition(CaptainBrain.captain.overrides);
+  CaptainBrain.updateCaptain(m);
+}
+
+function runPersonalityModule() {
+  const m = calculatePersonality(CaptainBrain.captain.overrides);
+  CaptainBrain.updateCaptain(m);
+}
+
+function runEvolutionModule() {
+  const m = calculateEvolution(CaptainBrain.captain.overrides);
+  CaptainBrain.updateCaptain(m);
+}
+
+function runMasteryModule() {
+  const m = calculateMastery(CaptainBrain.captain.overrides);
+  CaptainBrain.updateCaptain(m);
+}
+
+/* ============================================================
+   RUN EVERYTHING (Full Captain Brain)
+   ============================================================ */
+
+function runEverything() {
+  seedRoundsAndUsage();
+
+  runHotHandModule();
+  runClutchModule();
+  runTrendModule();
+  runVolatilityModule();
+  runStabilityModule();
+
+  runMomentumModule();
+  runCollapseModule();
+
+  runIntuitionModule();
+  runPersonalityModule();
+  runEvolutionModule();
+  runMasteryModule();
+
+  showFullCaptainBrain();
+  saveState();
+}
+
+/* ============================================================
+   FULL CAPTAIN BRAIN REPORT GENERATOR
+   ============================================================ */
+
+function showFullCaptainBrain() {
+  let text = "FULL CAPTAIN BRAIN REPORT\n\n";
+
+  /* ------------------------------
+     PLAYER METRICS
+     ------------------------------ */
+  text += "=== PLAYER METRICS ===\n";
+
+  Object.entries(CaptainBrain.players).forEach(([name, m]) => {
+    text += `${name}:\n`;
+    text += `• Hot: ${((m.hot || 0) * 100).toFixed(0)}%\n`;
+    text += `• Clutch: ${((m.clutch || 0) * 100).toFixed(0)}%\n`;
+    text += `• Trend: ${((m.trend || 0) * 100).toFixed(0)}%\n`;
+    text += `• Volatility: ${((m.volatility || 0) * 100).toFixed(0)}%\n`;
+    text += `• Stability: ${((m.stability || 0) * 100).toFixed(0)}%\n\n`;
+  });
+
+  /* ------------------------------
+     OPPONENT METRICS
+     ------------------------------ */
+  text += "=== OPPONENT METRICS ===\n";
+  text += `Momentum: ${((CaptainBrain.opponent.momentum || 0) * 100).toFixed(0)}%\n`;
+  text += `Collapse: ${((CaptainBrain.opponent.collapse || 0) * 100).toFixed(0)}%\n\n`;
+
+  /* ------------------------------
+     CAPTAIN METRICS
+     ------------------------------ */
+  text += "=== CAPTAIN METRICS ===\n";
+  text += `Intuition: ${((CaptainBrain.captain.intuition || 0) * 100).toFixed(0)}%\n`;
+  text += `Personality: ${CaptainBrain.captain.personality || "Unknown"}\n`;
+  text += `Evolution: ${((CaptainBrain.captain.evolution || 0) * 100).toFixed(0)}%\n`;
+  text += `Mastery: ${((CaptainBrain.captain.mastery || 0) * 100).toFixed(0)}%\n`;
+
+  /* ------------------------------
+     OUTPUT TO UI
+     ------------------------------ */
+  document.getElementById('everythingOutput').value = text;
+
+  /* ------------------------------
+     RAW JSON VIEWER
+     ------------------------------ */
+  document.getElementById('brainRaw').value =
+    JSON.stringify(CaptainBrain, null, 2);
+}
+
+/* ============================================================
+   END OF SCRIPT
+   ============================================================ */
+		</script>
+	</body>
+</html>
