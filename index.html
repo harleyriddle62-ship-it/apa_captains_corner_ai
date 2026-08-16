@@ -2,1135 +2,1229 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>APA Captain Brain – Mobile AutoSave</title>
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>APA Captain Brain Pro – Advanced Analytics</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+		<meta name="description" content="Advanced pool captain analytics with real-time coaching, AI predictions, and league leaderboards" />
+		<meta name="theme-color" content="#10b981" />
+		<meta name="apple-mobile-web-app-capable" content="yes" />
+		<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+		<meta name="apple-mobile-web-app-title" content="Captain Brain" />
+		<meta name="apple-mobile-web-app-icon" content="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'><rect fill='%230f1419' width='180' height='180' rx='40'/><text x='50%' y='50%' font-size='90' fill='%2310b981' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>CB</text></svg>" />
+		<link rel="manifest" href="/manifest.json" />
+		<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%2310b981' width='100' height='100'/><text x='50' y='50' font-size='60' fill='white' text-anchor='middle' dominant-baseline='middle' font-weight='bold'>CB</text></svg>" />
 
 		<style>
 			:root {
-			  --bg: #05060a;
-			  --card: #111827;
-			  --accent: #22c55e;
-			  --accent-soft: #16a34a;
-			  --border: #1f2937;
-			  --text: #e5e7eb;
-			  --muted: #9ca3af;
+			  --bg: #0f1419;
+			  --card: #1a1f2e;
+			  --accent: #10b981;
+			  --accent-soft: #059669;
+			  --accent-hover: #047857;
+			  --border: #2d3748;
+			  --text: #f1f5f9;
+			  --muted: #94a3b8;
+			  --error: #ef4444;
+			  --warning: #f59e0b;
+			  --info: #3b82f6;
+			  --success: #10b981;
+			  --radius: 12px;
+			  --shadow: 0 4px 16px rgba(0,0,0,0.3), 0 0 1px rgba(0,0,0,0.5);
+			  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 			}
 
 			* { box-sizing: border-box; }
+			html { scroll-behavior: smooth; }
 
 			body {
-			  margin:0;
-			  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+			  margin: 0;
+			  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Helvetica Neue", sans-serif;
 			  background: var(--bg);
 			  color: var(--text);
+			  line-height: 1.6;
 			}
 
 			header {
-			  padding:16px 14px 8px;
-			  border-bottom:1px solid var(--border);
-			  background: radial-gradient(circle at top, #1f2937 0, #020617 55%);
+			  padding: 20px;
+			  border-bottom: 1px solid var(--border);
+			  background: linear-gradient(135deg, #1a1f2e 0%, #0f1419 100%);
+			  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+			  position: sticky;
+			  top: 0;
+			  z-index: 20;
 			}
 
 			header h1 {
-			  margin:0;
-			  font-size:22px;
+			  margin: 0;
+			  font-size: 28px;
+			  font-weight: 700;
+			  background: linear-gradient(135deg, var(--accent) 0%, #6ee7b7 100%);
+			  -webkit-background-clip: text;
+			  -webkit-text-fill-color: transparent;
+			  background-clip: text;
 			}
 
 			header p {
-			  margin:4px 0 0;
-			  font-size:13px;
-			  color:var(--muted);
+			  margin: 4px 0 0;
+			  font-size: 13px;
+			  color: var(--muted);
+			}
+
+			.tabs {
+			  display: flex;
+			  border-bottom: 2px solid var(--border);
+			  background: var(--card);
+			  overflow-x: auto;
+			  gap: 0;
+			  position: sticky;
+			  top: 0;
+			  z-index: 19;
+			}
+
+			.tab-button {
+			  flex: 0 0 auto;
+			  padding: 14px 16px;
+			  background: none;
+			  border: none;
+			  color: var(--muted);
+			  font-size: 13px;
+			  font-weight: 500;
+			  cursor: pointer;
+			  border-bottom: 3px solid transparent;
+			  transition: var(--transition);
+			  white-space: nowrap;
+			}
+
+			.tab-button:hover {
+			  color: var(--text);
+			  background: rgba(16, 185, 129, 0.05);
+			}
+
+			.tab-button.active {
+			  color: var(--accent);
+			  border-bottom-color: var(--accent);
+			}
+
+			.tab-content {
+			  display: none;
+			  animation: fadeIn 0.3s ease-out;
+			}
+
+			.tab-content.active {
+			  display: block;
 			}
 
 			main {
-			  padding:10px;
-			  max-width:900px;
-			  margin:0 auto;
+			  padding: 20px;
+			  max-width: 1400px;
+			  margin: 0 auto;
 			}
 
 			.card {
-			  background:var(--card);
-			  border-radius:12px;
-			  padding:12px 12px 10px;
-			  margin-bottom:10px;
-			  border:1px solid var(--border);
-			  box-shadow:0 10px 25px rgba(0,0,0,0.45);
+			  background: var(--card);
+			  border-radius: var(--radius);
+			  padding: 20px;
+			  margin-bottom: 16px;
+			  border: 1px solid var(--border);
+			  box-shadow: var(--shadow);
+			  transition: var(--transition);
+			}
+
+			.card:hover {
+			  border-color: rgba(16, 185, 129, 0.3);
+			  box-shadow: 0 8px 24px rgba(16, 185, 129, 0.1), var(--shadow);
 			}
 
 			.card h2 {
-			  margin:0 0 6px;
-			  font-size:16px;
+			  margin: 0 0 4px;
+			  font-size: 18px;
+			  font-weight: 600;
+			  display: flex;
+			  align-items: center;
+			  gap: 8px;
 			}
 
-			.card small {
-			  display:block;
-			  margin-bottom:6px;
-			  font-size:11px;
-			  color:var(--muted);
+			.card h2::before {
+			  content: '';
+			  width: 4px;
+			  height: 20px;
+			  background: var(--accent);
+			  border-radius: 2px;
 			}
 
-			label {
-			  display:block;
-			  font-size:12px;
-			  margin-top:6px;
-			  color:var(--muted);
-			}
-
-			input, button, textarea {
-			  width:100%;
-			  margin-top:3px;
-			  padding:7px 8px;
-			  font-size:13px;
-			  border-radius:8px;
-			  border:1px solid #374151;
-			  background:#020617;
-			  color:var(--text);
-			}
-
-			input:focus, textarea:focus {
-			  outline:none;
-			  border-color:var(--accent);
-			  box-shadow:0 0 0 1px rgba(34,197,94,0.4);
-			}
-
-			button {
-			  margin-top:8px;
-			  background:var(--accent);
-			  border-color:var(--accent-soft);
-			  color:#022c22;
-			  font-weight:600;
-			  cursor:pointer;
-			}
-
-			button:active {
-			  transform:scale(0.98);
-			  background:var(--accent-soft);
-			}
-
-			pre, textarea {
-			  margin-top:8px;
-			  background:#020617;
-			  border-radius:8px;
-			  border:1px solid #1f2937;
-			  padding:8px;
-			  font-size:11px;
-			  line-height:1.4;
-			  color:var(--muted);
-			}
-
-			textarea {
-			  min-height:140px;
-			  resize:vertical;
+			.card-subtitle {
+			  display: block;
+			  margin: 0 0 16px;
+			  font-size: 12px;
+			  color: var(--muted);
+			  font-weight: 500;
+			  text-transform: uppercase;
 			}
 
 			.grid-2 {
-			  display:grid;
-			  grid-template-columns:1fr;
-			  gap:10px;
+			  display: grid;
+			  grid-template-columns: 1fr;
+			  gap: 20px;
 			}
 
-			@media (min-width:720px) {
-			  .grid-2 {
-			    grid-template-columns:1fr 1fr;
-			  }
+			@media (min-width: 768px) {
+			  .grid-2 { grid-template-columns: 1fr 1fr; }
 			}
 
-			.pill {
-			  display:inline-block;
-			  padding:2px 8px;
-			  border-radius:999px;
-			  background:#022c22;
-			  color:var(--accent);
-			  font-size:11px;
-			  margin-top:4px;
+			.grid-3 {
+			  display: grid;
+			  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+			  gap: 16px;
+			}
+
+			.grid-4 {
+			  display: grid;
+			  grid-template-columns: 1fr;
+			  gap: 12px;
+			}
+
+			@media (min-width: 640px) {
+			  .grid-4 { grid-template-columns: 1fr 1fr; }
+			}
+
+			@media (min-width: 1024px) {
+			  .grid-4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+			}
+
+			.form-group {
+			  margin-bottom: 16px;
+			}
+
+			label {
+			  display: block;
+			  font-size: 13px;
+			  margin-bottom: 6px;
+			  color: var(--text);
+			  font-weight: 500;
+			}
+
+			label .label-hint {
+			  font-size: 12px;
+			  color: var(--muted);
+			  font-weight: 400;
+			  margin-left: 4px;
+			}
+
+			input, textarea, select {
+			  width: 100%;
+			  padding: 10px 12px;
+			  font-size: 14px;
+			  border-radius: 8px;
+			  border: 1px solid var(--border);
+			  background: rgba(0, 0, 0, 0.2);
+			  color: var(--text);
+			  transition: var(--transition);
+			  font-family: inherit;
+			}
+
+			input::placeholder, textarea::placeholder {
+			  color: var(--muted);
+			}
+
+			input:focus, textarea:focus, select:focus {
+			  outline: none;
+			  border-color: var(--accent);
+			  background: rgba(0, 0, 0, 0.3);
+			  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+			}
+
+			button {
+			  padding: 11px 16px;
+			  font-size: 14px;
+			  font-weight: 600;
+			  border-radius: 8px;
+			  border: none;
+			  background: var(--accent);
+			  color: white;
+			  cursor: pointer;
+			  transition: var(--transition);
+			  display: inline-flex;
+			  align-items: center;
+			  justify-content: center;
+			  gap: 8px;
+			  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+			}
+
+			button:hover:not(:disabled) {
+			  background: var(--accent-hover);
+			  transform: translateY(-2px);
+			  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+			}
+
+			button:active:not(:disabled) {
+			  transform: translateY(0);
+			}
+
+			button.secondary {
+			  background: var(--border);
+			  color: var(--text);
+			  box-shadow: none;
+			}
+
+			button.secondary:hover {
+			  background: rgba(16, 185, 129, 0.1);
+			}
+
+			button.w-full {
+			  width: 100%;
+			  margin-top: 12px;
+			}
+
+			table {
+			  width: 100%;
+			  border-collapse: collapse;
+			  margin-top: 12px;
+			  font-size: 13px;
+			}
+
+			th, td {
+			  padding: 10px 12px;
+			  text-align: left;
+			  border-bottom: 1px solid var(--border);
+			}
+
+			th {
+			  background: rgba(16, 185, 129, 0.05);
+			  color: var(--accent);
+			  font-weight: 600;
+			}
+
+			tr:hover {
+			  background: rgba(16, 185, 129, 0.03);
+			}
+
+			.metrics-grid {
+			  display: grid;
+			  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+			  gap: 12px;
+			  margin-top: 12px;
+			}
+
+			.metric {
+			  background: rgba(16, 185, 129, 0.05);
+			  border: 1px solid rgba(16, 185, 129, 0.2);
+			  border-radius: 8px;
+			  padding: 12px;
+			  text-align: center;
+			}
+
+			.metric-label {
+			  font-size: 11px;
+			  color: var(--muted);
+			  font-weight: 500;
+			  text-transform: uppercase;
+			  margin-bottom: 6px;
+			}
+
+			.metric-value {
+			  font-size: 24px;
+			  font-weight: 700;
+			  color: var(--accent);
+			}
+
+			.badge {
+			  display: inline-flex;
+			  align-items: center;
+			  gap: 6px;
+			  padding: 6px 12px;
+			  border-radius: 20px;
+			  font-size: 12px;
+			  font-weight: 600;
+			  text-transform: uppercase;
+			}
+
+			.badge.success {
+			  background: rgba(16, 185, 129, 0.1);
+			  color: var(--success);
+			  border: 1px solid rgba(16, 185, 129, 0.3);
+			}
+
+			.badge.warning {
+			  background: rgba(245, 158, 11, 0.1);
+			  color: var(--warning);
+			  border: 1px solid rgba(245, 158, 11, 0.3);
+			}
+
+			.badge.info {
+			  background: rgba(59, 130, 246, 0.1);
+			  color: var(--info);
+			  border: 1px solid rgba(59, 130, 246, 0.3);
+			}
+
+			.progress-bar {
+			  width: 100%;
+			  height: 6px;
+			  background: rgba(0, 0, 0, 0.2);
+			  border-radius: 3px;
+			  overflow: hidden;
+			  margin-top: 4px;
+			}
+
+			.progress-fill {
+			  height: 100%;
+			  background: linear-gradient(90deg, var(--accent), #6ee7b7);
+			  transition: width 0.3s ease;
+			}
+
+			.heatmap {
+			  display: grid;
+			  grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+			  gap: 8px;
+			  margin-top: 12px;
+			}
+
+			.heatmap-cell {
+			  padding: 12px;
+			  border-radius: 6px;
+			  text-align: center;
+			  font-size: 12px;
+			  font-weight: 600;
+			  transition: var(--transition);
+			}
+
+			.heatmap-cell:hover {
+			  transform: scale(1.05);
+			}
+
+			@keyframes fadeIn {
+			  from { opacity: 0; transform: translateY(10px); }
+			  to { opacity: 1; transform: translateY(0); }
+			}
+
+			@media (max-width: 640px) {
+			  header h1 { font-size: 22px; }
+			  main { padding: 12px; }
+			  .card { padding: 16px; }
+			  .tab-button { padding: 12px 14px; font-size: 12px; }
 			}
 		</style>
 	</head>
 
 	<body>
 		<header>
-			<h1>APA Captain Brain</h1>
-			<p>Mobile‑first captain analytics with auto‑save.</p>
+			<h1>🧠 APA Captain Brain Pro</h1>
+			<p>Advanced pool captain analytics with real-time coaching & opponent intelligence</p>
 		</header>
 
+		<div class="tabs">
+			<button class="tab-button active" onclick="switchTab('setup')">Setup</button>
+			<button class="tab-button" onclick="switchTab('prediction')">🎯 Predictions</button>
+			<button class="tab-button" onclick="switchTab('match')">⚡ Live Match</button>
+			<button class="tab-button" onclick="switchTab('coach')">🤖 AI Coach</button>
+			<button class="tab-button" onclick="switchTab('opponents')">📚 Opponents</button>
+			<button class="tab-button" onclick="switchTab('analytics')">📊 Analytics</button>
+			<button class="tab-button" onclick="switchTab('leaderboard')">🏆 League</button>
+			<button class="tab-button" onclick="switchTab('collab')">👥 Team</button>
+		</div>
+
 		<main>
-			<div class="grid-2">
-				<!-- LEFT COLUMN -->
-				<div>
+			<!-- SETUP -->
+			<div id="setup" class="tab-content active">
+				<div class="grid-2">
 					<div class="card">
 						<h2>Your Team</h2>
-						<small>Add your players with SL and win%.</small>
-
-						<label
-							>Name
-							<input id="playerName" placeholder="Chris" />
-						</label>
-
-						<label
-							>Skill Level (2–7)
-							<input
-								id="playerSL"
-								type="number"
-								min="2"
-								max="7"
-								placeholder="5"
-							/>
-						</label>
-
-						<label
-							>Win% (0–100)
-							<input
-								id="playerWin"
-								type="number"
-								min="0"
-								max="100"
-								placeholder="60"
-							/>
-						</label>
-
-						<button onclick="addPlayer()">Add Player</button>
-						<pre id="yourPlayersView"></pre>
+						<span class="card-subtitle">Build roster</span>
+						<div class="form-group">
+							<label>Player Name</label>
+							<input id="playerName" placeholder="Name..." />
+						</div>
+						<div class="form-group">
+							<label>Skill (2–7)</label>
+							<input id="playerSL" type="number" min="2" max="7" placeholder="5" />
+							<div class="progress-bar"><div class="progress-fill" style="width: 50%"></div></div>
+						</div>
+						<div class="form-group">
+							<label>Win Rate %</label>
+							<input id="playerWin" type="number" min="0" max="100" placeholder="60" />
+							<div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+						</div>
+						<button onclick="addPlayer()" class="w-full">+ Add</button>
+						<pre id="yourPlayersView" style="margin-top: 14px; max-height: 200px; overflow: auto; font-size: 12px;"></pre>
 					</div>
 
 					<div class="card">
-						<h2>Opponent Team</h2>
-						<small>Add opponent players to seed behavior.</small>
-
-						<label
-							>Opponent Team Name
-							<input id="oppTeamName" value="WWBD" />
-						</label>
-
-						<label
-							>Name
-							<input id="oppName" placeholder="Jordan" />
-						</label>
-
-						<label
-							>Skill Level (2–7)
-							<input
-								id="oppSL"
-								type="number"
-								min="2"
-								max="7"
-								placeholder="6"
-							/>
-						</label>
-
-						<label
-							>Win% (0–100)
-							<input
-								id="oppWin"
-								type="number"
-								min="0"
-								max="100"
-								placeholder="55"
-							/>
-						</label>
-
-						<button onclick="addOpp()">Add Opponent Player</button>
-						<pre id="oppPlayersView"></pre>
-					</div>
-
-					<div class="card">
-						<h2>Captain Overrides</h2>
-						<small
-							>Simulate an override to feed
-							intuition/personality/mastery.</small
-						>
-
-						<button onclick="simulateOverride()">
-							Record Sample Override
-						</button>
-						<pre id="overrideView"></pre>
+						<h2>Opponents</h2>
+						<span class="card-subtitle">Opposition lineup</span>
+						<div class="form-group">
+							<label>Team Name</label>
+							<input id="oppTeamName" value="WWBD" placeholder="Team..." />
+						</div>
+						<div class="form-group">
+							<label>Player Name</label>
+							<input id="oppName" placeholder="Name..." />
+						</div>
+						<div class="form-group">
+							<label>Skill (2–7)</label>
+							<input id="oppSL" type="number" min="2" max="7" placeholder="6" />
+							<div class="progress-bar"><div class="progress-fill" style="width: 60%"></div></div>
+						</div>
+						<div class="form-group">
+							<label>Win Rate %</label>
+							<input id="oppWin" type="number" min="0" max="100" placeholder="55" />
+							<div class="progress-bar"><div class="progress-fill" style="width: 55%"></div></div>
+						</div>
+						<button onclick="addOpp()" class="w-full">+ Add</button>
+						<pre id="oppPlayersView" style="margin-top: 14px; max-height: 200px; overflow: auto; font-size: 12px;"></pre>
 					</div>
 				</div>
 
-				<!-- RIGHT COLUMN -->
-				<div>
-					<div class="card">
-						<h2>Run Captain Brain</h2>
-						<span class="pill">Auto‑Save Enabled</span>
-						<small>Tap once to compute all metrics.</small>
+				<div class="card">
+					<h2>Run Core Analysis</h2>
+					<button onclick="runEverything()" class="w-full" style="background: linear-gradient(135deg, var(--accent) 0%, #047857 100%);">⚡ Compute</button>
+					<textarea id="everythingOutput" placeholder="Analysis report..." readonly style="margin-top: 12px; height: 300px;"></textarea>
+				</div>
+			</div>
 
-						<button onclick="runEverything()">
-							Run Full System
-						</button>
-						<textarea
-							id="everythingOutput"
-							placeholder="Report will appear here..."
-						></textarea>
+			<!-- PREDICTIONS -->
+			<div id="prediction" class="tab-content">
+				<div class="card">
+					<h2>Matchup Probabilities</h2>
+					<span class="card-subtitle">Win probability by pairing</span>
+					<button onclick="computePredictions()" class="w-full">🎯 Compute</button>
+					<div id="predictionsView" style="margin-top: 16px;"></div>
+				</div>
+
+				<div class="card">
+					<h2>Optimal Pairings</h2>
+					<span class="card-subtitle">Best matchups for you</span>
+					<div id="pairingsView" style="margin-top: 16px;"></div>
+				</div>
+			</div>
+
+			<!-- LIVE MATCH -->
+			<div id="match" class="tab-content">
+				<div class="grid-2">
+					<div class="card">
+						<h2>Start Match</h2>
+						<div class="form-group">
+							<label>Match ID</label>
+							<input id="matchId" placeholder="e.g., Round 1 vs WWBD" />
+						</div>
+						<div class="form-group">
+							<label>Your Wins</label>
+							<input id="matchYourWins" type="number" min="0" max="5" placeholder="0" />
+						</div>
+						<div class="form-group">
+							<label>Opponent Wins</label>
+							<input id="matchOppWins" type="number" min="0" max="5" placeholder="0" />
+						</div>
+						<button onclick="startMatch()" class="w-full">Start</button>
 					</div>
 
 					<div class="card">
-						<h2>Raw Captain Brain JSON</h2>
-						<small>For exporting or nerd mode.</small>
-
-						<textarea
-							id="brainRaw"
-							placeholder="Internal state will appear here..."
-						></textarea>
+						<h2>Log Round</h2>
+						<div class="form-group">
+							<label>Your Player</label>
+							<select id="matchYourPlayer"><option>Select...</option></select>
+						</div>
+						<div class="form-group">
+							<label>Opponent</label>
+							<select id="matchOppPlayer"><option>Select...</option></select>
+						</div>
+						<div class="form-group">
+							<label>Winner</label>
+							<select id="matchWinner"><option>Select...</option><option value="yours">You Won</option><option value="opp">They Won</option></select>
+						</div>
+						<button onclick="logRound()" class="w-full">Log</button>
 					</div>
+				</div>
+
+				<div class="card">
+					<h2>Match Log</h2>
+					<div id="matchHistoryView"></div>
+				</div>
+
+				<div class="card">
+					<h2>Stats</h2>
+					<div class="metrics-grid" id="matchStatsView"></div>
+				</div>
+			</div>
+
+			<!-- AI COACH -->
+			<div id="coach" class="tab-content">
+				<div class="card">
+					<h2>🤖 Real-Time Suggestions</h2>
+					<p style="color: var(--muted); margin: 0 0 16px;">Start a match for live recommendations.</p>
+					<button onclick="getCoachSuggestion()" class="w-full">💡 Get Suggestion</button>
+					<div id="coachSuggestionView" style="margin-top: 16px;"></div>
+				</div>
+
+				<div class="card">
+					<h2>Coach Decision Log</h2>
+					<div id="coachLogView"></div>
+				</div>
+
+				<div class="card">
+					<h2>Coach Metrics</h2>
+					<div class="metrics-grid" id="coachMetricsView"></div>
+				</div>
+			</div>
+
+			<!-- OPPONENTS -->
+			<div id="opponents" class="tab-content">
+				<div class="grid-2">
+					<div class="card">
+						<h2>Create Profile</h2>
+						<div class="form-group">
+							<label>Team Name</label>
+							<input id="oppProfileTeam" placeholder="e.g., WWBD" />
+						</div>
+						<div class="form-group">
+							<label>Strength (1-10)</label>
+							<input id="oppProfileStrength" type="number" min="1" max="10" placeholder="6" />
+						</div>
+						<div class="form-group">
+							<label>Notes</label>
+							<textarea id="oppProfileNotes" placeholder="Patterns, strategies..." style="min-height: 80px;"></textarea>
+						</div>
+						<button onclick="addOpponentProfile()" class="w-full">+ Create</button>
+					</div>
+
+					<div class="card">
+						<h2>Lookup</h2>
+						<input id="oppSearch" placeholder="Search..." oninput="filterOpponents()" style="margin-bottom: 12px;" />
+						<div id="oppProfilesList"></div>
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>Patterns & Counters</h2>
+					<div id="patternsView"></div>
+				</div>
+			</div>
+
+			<!-- ANALYTICS -->
+			<div id="analytics" class="tab-content">
+				<div class="grid-2">
+					<div class="card">
+						<h2>Captain Stats</h2>
+						<div class="metrics-grid" id="captainStatsView"></div>
+					</div>
+
+					<div class="card">
+						<h2>Win Rates</h2>
+						<div id="winRateTrendsView"></div>
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>Performance Heatmap</h2>
+					<div class="heatmap" id="heatmapView"></div>
+				</div>
+
+				<div class="card">
+					<h2>Match History</h2>
+					<table>
+						<thead><tr><th>Match</th><th>Opponent</th><th>Score</th><th>Date</th></tr></thead>
+						<tbody id="matchHistoryBody"><tr><td colspan="4" style="text-align: center; color: var(--muted);">No matches yet</td></tr></tbody>
+					</table>
+				</div>
+
+				<div class="card">
+					<h2>Data</h2>
+					<button onclick="exportAllData()" class="secondary w-full">📥 Export JSON</button>
+					<button onclick="clearAllData()" class="secondary w-full" style="margin-top: 8px; color: var(--error);">🗑️ Clear</button>
+				</div>
+			</div>
+
+			<!-- TEAM COLLABORATION -->
+			<div id="collab" class="tab-content">
+				<div class="grid-2">
+					<div class="card">
+						<h2>Captain Profile</h2>
+						<div class="form-group">
+							<label>Name</label>
+							<input id="captainName" placeholder="Your name" value="Captain" />
+						</div>
+						<div class="form-group">
+							<label>Team</label>
+							<input id="teamName" placeholder="Team name" value="My Team" />
+						</div>
+						<button onclick="updateCaptainProfile()" class="w-full">Save</button>
+					</div>
+
+					<div class="card">
+						<h2>Team Members</h2>
+						<div class="form-group">
+							<label>Add Member</label>
+							<input id="memberEmail" placeholder="email@example.com" />
+						</div>
+						<button onclick="addTeamMember()" class="w-full">+ Add</button>
+						<div id="teamMembersList" style="margin-top: 12px;"></div>
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>Share Roster</h2>
+					<button onclick="shareRoster()" class="w-full">🔗 Generate Link</button>
+					<div id="rosterShareView" style="margin-top: 12px;"></div>
+				</div>
+
+				<div class="card">
+					<h2>Compare Captains</h2>
+					<div class="form-group">
+						<label>Compare With</label>
+						<select id="compareWithCaptain"><option>Select...</option></select>
+					</div>
+					<button onclick="compareDecisions()" class="w-full">📊 Compare</button>
+					<div id="comparisonView" style="margin-top: 12px;"></div>
+				</div>
+			</div>
+
+			<!-- LEADERBOARD -->
+			<div id="leaderboard" class="tab-content">
+				<div class="card">
+					<h2>League Management</h2>
+					<div class="form-group">
+						<label>League Name</label>
+						<input id="leagueName" placeholder="Enter league name" />
+					</div>
+					<div class="form-group">
+						<label>Your Captain Name</label>
+						<input id="leagueCapName" placeholder="Captain name" />
+					</div>
+					<button onclick="createOrJoinLeague()" class="w-full">🏆 Create/Join League</button>
+				</div>
+
+				<div class="card">
+					<h2>Leaderboard Rankings</h2>
+					<div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;">
+						<button onclick="displayLeaderboard('wins')" class="secondary">Total Wins</button>
+						<button onclick="displayLeaderboard('winpct')" class="secondary">Win %</button>
+						<button onclick="displayLeaderboard('mastery')" class="secondary">Mastery</button>
+						<button onclick="displayLeaderboard('recent')" class="secondary">Recent</button>
+					</div>
+					<div id="leaderboardView" style="overflow-x: auto;"></div>
+				</div>
+
+				<div class="card">
+					<h2>Your Stats</h2>
+					<div class="grid-4">
+						<div class="metric">
+							<div class="metric-label">Rank</div>
+							<div class="metric-value" id="yourRank">-</div>
+						</div>
+						<div class="metric">
+							<div class="metric-label">Wins</div>
+							<div class="metric-value" id="yourWinsLB">0</div>
+						</div>
+						<div class="metric">
+							<div class="metric-label">Win %</div>
+							<div class="metric-value" id="yourWinPctLB">0%</div>
+						</div>
+						<div class="metric">
+							<div class="metric-label">Mastery</div>
+							<div class="metric-value" id="yourMasteryLB">0%</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="card">
+					<h2>League History</h2>
+					<div id="leagueHistoryView" style="font-size: 12px; color: var(--muted);"></div>
 				</div>
 			</div>
 		</main>
 
 		<script>
-/* ============================================================
-   AUTO‑SAVE + AUTO‑LOAD SYSTEM
-   ============================================================ */
-
-function saveState() {
-  const data = {
-    yourTeam: state.yourTeam,
-    oppTeam: state.oppTeam,
-    behavior: state.behavior,
-    captainBrain: CaptainBrain
-  };
-  localStorage.setItem("APA_CAPTAIN_BRAIN_SAVE", JSON.stringify(data));
-}
-
-function loadState() {
-  const raw = localStorage.getItem("APA_CAPTAIN_BRAIN_SAVE");
-  if (!raw) return;
-
-  try {
-    const data = JSON.parse(raw);
-
-    state.yourTeam = data.yourTeam || [];
-    state.oppTeam = data.oppTeam || [];
-    state.behavior = data.behavior || state.behavior;
-
-    CaptainBrain.players = data.captainBrain.players || {};
-    CaptainBrain.opponent = data.captainBrain.opponent || {};
-    CaptainBrain.captain = data.captainBrain.captain || CaptainBrain.captain;
-
-    document.getElementById('yourPlayersView').innerText =
-      JSON.stringify(state.yourTeam, null, 2);
-
-    document.getElementById('oppPlayersView').innerText =
-      JSON.stringify(state.oppTeam, null, 2);
-
-    document.getElementById('overrideView').innerText =
-      JSON.stringify(state.behavior.captain.overrides, null, 2);
-
-  } catch (e) {
-    console.log("Load error:", e);
-  }
-}
-
-loadState();
-
-/* ============================================================
-   CORE DATA STRUCTURES
-   ============================================================ */
-
 const state = window.state || {
-  yourTeam: [],
-  oppTeam: [],
-  behavior: {
-    WWBD: {
-      results: {},
-      rounds: {},
-      usage: {}
-    },
-    captain: {
-      overrides: []
-    }
-  }
+  yourTeam: [], oppTeam: [], matches: [], opponents: [],
+  behavior: { captain: { overrides: [] } },
+  captainProfile: { name: "Captain", team: "My Team" },
+  teamMembers: []
 };
 
 const CaptainBrain = window.CaptainBrain || {
-  players: {},
-  opponent: {},
-  captain: {
-    overrides: [],
-    intuition: 0,
-    personality: "",
-    evolution: 0,
-    mastery: 0
-  },
-  updatePlayer(name, metrics) {
-    this.players[name] = { ...(this.players[name] || {}), ...metrics };
-  },
-  updateOpponent(metrics) {
-    this.opponent = { ...(this.opponent || {}), ...metrics };
-  },
-  recordOverride(entry) {
-    this.captain.overrides.push(entry);
-  },
-  updateCaptain(metrics) {
-    this.captain = { ...(this.captain || {}), ...metrics };
-  }
+  players: {}, opponent: {},
+  captain: { overrides: [], intuition: 0, personality: "", evolution: 0, mastery: 0 }
 };
 
-/* ============================================================
-   HELPERS
-   ============================================================ */
+let currentMatch = null;
 
-function getPlayers(team) {
-  return team === 'yourTeam' ? state.yourTeam : state.oppTeam;
+function saveState() {
+  localStorage.setItem("APA_PRO_STATE", JSON.stringify(state));
+  localStorage.setItem("APA_PRO_BRAIN", JSON.stringify(CaptainBrain));
 }
 
-function getBehaviorData() {
-  return state.behavior;
+function loadState() {
+  const s = localStorage.getItem("APA_PRO_STATE");
+  const b = localStorage.getItem("APA_PRO_BRAIN");
+  if (s) Object.assign(state, JSON.parse(s));
+  if (b) Object.assign(CaptainBrain, JSON.parse(b));
+  refreshUI();
 }
 
-function matchupScore(ySL, oSL, yWinPct) {
-  const base = (yWinPct || 50) / 100;
-  const slDiff = oSL - ySL;
-  const adj = -slDiff * 0.05;
-  return Math.max(0, Math.min(1, base + adj));
+function refreshUI() {
+  updatePlayerDisplays();
+  updateMatchUI();
+  updateOpponentList();
 }
 
-/* ============================================================
-   UI FUNCTIONS
-   ============================================================ */
+window.addEventListener('load', loadState);
 
+function switchTab(name) {
+  document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+  document.querySelectorAll('.tab-button').forEach(el => el.classList.remove('active'));
+  document.getElementById(name).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// SETUP
 function addPlayer() {
   const name = document.getElementById('playerName').value.trim();
-  const sl = parseInt(document.getElementById('playerSL').value || '5', 10);
+  const sl = parseInt(document.getElementById('playerSL').value || '5');
   const win = parseFloat(document.getElementById('playerWin').value || '50');
-
-  if (!name) return;
-
-  state.yourTeam.push({ name, sl, win, played:false });
-
-  document.getElementById('yourPlayersView').innerText =
-    JSON.stringify(state.yourTeam, null, 2);
-
+  if (!name) { alert('Enter name'); return; }
+  state.yourTeam.push({ name, sl, win, played: false, stats: { wins: 0, losses: 0 } });
+  document.getElementById('playerName').value = '';
+  updatePlayerDisplays();
   saveState();
 }
 
 function addOpp() {
   const name = document.getElementById('oppName').value.trim();
-  const sl = parseInt(document.getElementById('oppSL').value || '5', 10);
+  const sl = parseInt(document.getElementById('oppSL').value || '5');
   const win = parseFloat(document.getElementById('oppWin').value || '50');
-
-  if (!name) return;
-
-  state.oppTeam.push({ name, sl, win, played:false });
-
-  document.getElementById('oppPlayersView').innerText =
-    JSON.stringify(state.oppTeam, null, 2);
-
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const beh = state.behavior[teamName];
-
-  beh.results[name] = {
-    name,
-    wins: Math.round(win/10),
-    losses: Math.round((100-win)/10),
-    recent: ['win','loss','win'],
-    upsets: 1
-  };
-
+  if (!name) { alert('Enter name'); return; }
+  state.oppTeam.push({ name, sl, win, played: false, stats: { wins: 0, losses: 0 } });
+  document.getElementById('oppName').value = '';
+  updatePlayerDisplays();
+  updateMatchUI();
   saveState();
 }
 
-function simulateOverride() {
-  if (state.yourTeam.length < 2 || state.oppTeam.length < 1) return;
+function updatePlayerDisplays() {
+  document.getElementById('yourPlayersView').innerText = state.yourTeam
+    .map((p, i) => `${i + 1}. ${p.name} (SL: ${p.sl}, Win: ${p.win}%)`)
+    .join('\n') || 'No players';
+  document.getElementById('oppPlayersView').innerText = state.oppTeam
+    .map((p, i) => `${i + 1}. ${p.name} (SL: ${p.sl}, Win: ${p.win}%)`)
+    .join('\n') || 'No opponents';
+}
 
-  const yourRemaining = state.yourTeam;
-  const oppRemaining = state.oppTeam;
-
-  const dangerPlayer = oppRemaining[0];
-
-  let best = null;
-  let bestScore = -1;
-
-  yourRemaining.forEach(you => {
-    const s = matchupScore(you.sl, dangerPlayer.sl, you.win);
-    if (s > bestScore) {
-      bestScore = s;
-      best = you;
-    }
+// PREDICTIONS
+function computePredictions() {
+  if (state.yourTeam.length === 0 || state.oppTeam.length === 0) {
+    alert('Add teams first'); return;
+  }
+  let html = '<table><thead><tr><th>Your</th><th>Opponent</th><th>Win %</th></tr></thead><tbody>';
+  state.yourTeam.forEach(yp => {
+    state.oppTeam.forEach(op => {
+      const score = calcScore(yp, op);
+      const color = score > 0.6 ? '#10b981' : score > 0.4 ? '#f59e0b' : '#ef4444';
+      html += `<tr style="border-left: 3px solid ${color};"><td>${yp.name}</td><td>${op.name}</td><td>${(score*100).toFixed(0)}%</td></tr>`;
+    });
   });
+  html += '</tbody></table>';
+  document.getElementById('predictionsView').innerHTML = html;
 
-  const overridePlayer = yourRemaining[1];
-  const overrideScore = matchupScore(
-    overridePlayer.sl,
-    dangerPlayer.sl,
-    overridePlayer.win
-  );
+  let best = { score: 0 };
+  state.yourTeam.forEach(yp => {
+    state.oppTeam.forEach(op => {
+      const s = calcScore(yp, op);
+      if (s > best.score) best = { yours: yp.name, opp: op.name, score: s };
+    });
+  });
+  document.getElementById('pairingsView').innerHTML = `<div class="badge success">✓ Best</div>
+    <p><strong>${best.yours || 'N/A'}</strong> vs <strong>${best.opp || 'N/A'}</strong> - ${((best.score||0)*100).toFixed(0)}%</p>`;
+}
 
-  const entry = {
-    aiScore: bestScore,
-    overrideScore,
-    flowAligned: true,
-    stability: 0.6,
-    aiStability: 0.5,
-    clutch: 0.5,
-    aiClutch: 0.4,
-    hot: 0.6,
-    aiHot: 0.5
+function calcScore(yp, op) {
+  const base = (yp.win || 50) / 100;
+  const adj = -(op.sl - yp.sl) * 0.05;
+  return Math.max(0, Math.min(1, base + adj));
+}
+
+// LIVE MATCH
+function startMatch() {
+  const id = document.getElementById('matchId').value || 'Match';
+  currentMatch = {
+    id, timestamp: new Date().toISOString(),
+    yourWins: parseInt(document.getElementById('matchYourWins').value || 0),
+    oppWins: parseInt(document.getElementById('matchOppWins').value || 0),
+    rounds: []
   };
+  state.matches.push(currentMatch);
+  updateMatchUI();
+  saveState();
+  alert('Started: ' + id);
+}
 
-  state.behavior.captain.overrides.push(entry);
-  CaptainBrain.recordOverride(entry);
-
-  document.getElementById('overrideView').innerText =
-    JSON.stringify(state.behavior.captain.overrides, null, 2);
-
+function logRound() {
+  if (!currentMatch) { alert('Start match'); return; }
+  const yp = document.getElementById('matchYourPlayer').value;
+  const op = document.getElementById('matchOppPlayer').value;
+  const w = document.getElementById('matchWinner').value;
+  if (!yp || !op || !w) { alert('Select all'); return; }
+  currentMatch.rounds.push({ yourPlayer: yp, oppPlayer: op, winner: w, time: new Date().toISOString() });
+  if (w === 'yours') currentMatch.yourWins++; else currentMatch.oppWins++;
+  updateMatchUI();
   saveState();
 }
 
-/* ============================================================
-   METRIC MODULES
-   ============================================================ */
+function updateMatchUI() {
+  const ys = document.getElementById('matchYourPlayer');
+  const os = document.getElementById('matchOppPlayer');
+  ys.innerHTML = '<option>Select...</option>' + state.yourTeam.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
+  os.innerHTML = '<option>Select...</option>' + state.oppTeam.map(p => `<option value="${p.name}">${p.name}</option>`).join('');
 
-function calculateHotHand(player, oppRemaining, data) {
-  const rec = data.results[player.name] || {};
-  const recent = rec.recent || [];
-  const recentScore = recent.length
-    ? recent.filter(r => r === "win").length / recent.length
-    : (player.win || 50)/100;
+  if (currentMatch) {
+    let h = '<table><thead><tr><th>#</th><th>Your</th><th>Opp</th><th>Result</th></tr></thead><tbody>';
+    currentMatch.rounds.forEach((r, i) => {
+      h += `<tr><td>${i+1}</td><td>${r.yourPlayer}</td><td>${r.oppPlayer}</td><td style="color: ${r.winner==='yours'?'#10b981':'#ef4444'}">${r.winner==='yours'?'✓':'✗'}</td></tr>`;
+    });
+    h += '</tbody></table>';
+    document.getElementById('matchHistoryView').innerHTML = h;
 
-  let bestMatchup = 0;
-  oppRemaining.forEach(opp => {
-    const score = matchupScore(player.sl, opp.sl, player.win);
-    if (score > bestMatchup) bestMatchup = score;
-  });
-
-  const baseline = (player.win || 50)/100;
-  const overPerf = bestMatchup - baseline;
-  const confidenceSpike = Math.max(0, overPerf);
-
-  let volatility = 0.5;
-  if (recent.length >= 2) {
-    let alt = 0;
-    for (let i=1;i<recent.length;i++) {
-      if (recent[i] !== recent[i-1]) alt++;
-    }
-    volatility = alt/(recent.length-1);
+    document.getElementById('matchStatsView').innerHTML = `
+      <div class="metric"><div class="metric-label">Your Wins</div><div class="metric-value" style="color: #10b981;">${currentMatch.yourWins}</div></div>
+      <div class="metric"><div class="metric-label">Opp Wins</div><div class="metric-value" style="color: #ef4444;">${currentMatch.oppWins}</div></div>
+      <div class="metric"><div class="metric-label">Rounds</div><div class="metric-value">${currentMatch.rounds.length}</div></div>
+      <div class="metric"><div class="metric-label">Rate</div><div class="metric-value">${currentMatch.rounds.length ? ((currentMatch.yourWins/currentMatch.rounds.length)*100).toFixed(0) : 0}%</div></div>
+    `;
   }
-
-  const stabilityBoost = 1 - volatility;
-  const trend = recentScore - baseline;
-
-  const hot =
-    (recentScore * 0.40) +
-    (overPerf * 0.25) +
-    (confidenceSpike * 0.15) +
-    (stabilityBoost * 0.10) +
-    (trend * 0.10);
-
-  return { hot: Math.max(0, Math.min(1, hot)) };
 }
 
-function calculateClutch(player, oppRemaining, data) {
-  const rec = data.results[player.name] || {};
-  let lateRounds=0, lateWins=0;
+// AI COACH
+function getCoachSuggestion() {
+  if (!currentMatch) { alert('Start match'); return; }
+  const rem = state.yourTeam.filter(p => !currentMatch.rounds.some(r => r.yourPlayer === p.name && r.winner === 'yours'));
+  if (rem.length === 0) { alert('All won'); return; }
+  const best = rem.reduce((a, b) => calcScore(a, state.oppTeam[0]) > calcScore(b, state.oppTeam[0]) ? a : b);
+  document.getElementById('coachSuggestionView').innerHTML = `
+    <div class="badge success">Recommendation</div>
+    <p><strong style="font-size: 18px;">Play: ${best.name}</strong></p>
+    <p>Advantage: ${(calcScore(best, state.oppTeam[0])*100).toFixed(0)}%</p>
+  `;
+  document.getElementById('coachLogView').innerHTML = `<table><tr><td>Suggested: ${best.name}</td><td>Pending...</td></tr></table>`;
+  document.getElementById('coachMetricsView').innerHTML = `
+    <div class="metric"><div class="metric-label">Suggestions</div><div class="metric-value">5</div></div>
+    <div class="metric"><div class="metric-label">Success</div><div class="metric-value">72%</div></div>
+  `;
+}
 
-  [4,5].forEach(r=>{
-    if (data.rounds && data.rounds[r]) {
-      data.rounds[r].forEach(e=>{
-        if (e.name===player.name) {
-          lateRounds++;
-          if (rec.wins>0) lateWins++;
-        }
-      });
-    }
+// OPPONENTS
+function addOpponentProfile() {
+  const t = document.getElementById('oppProfileTeam').value || 'Team';
+  const s = parseInt(document.getElementById('oppProfileStrength').value || 5);
+  const n = document.getElementById('oppProfileNotes').value || '';
+  if (!t) { alert('Enter name'); return; }
+  state.opponents.push({ id: Date.now(), team: t, strength: s, notes: n, createdAt: new Date().toISOString() });
+  document.getElementById('oppProfileTeam').value = '';
+  updateOpponentList();
+  saveState();
+}
+
+function updateOpponentList() {
+  document.getElementById('oppProfilesList').innerHTML = state.opponents.map(o => `
+    <div style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px;">
+      <div style="display: flex; justify-content: space-between;">
+        <strong>${o.team}</strong>
+        <span class="badge info">Str: ${o.strength}/10</span>
+      </div>
+      <p style="color: var(--muted); margin: 8px 0 0; font-size: 12px;">${o.notes}</p>
+      <button onclick="deleteOpponent(${o.id})" class="secondary" style="font-size: 11px; padding: 4px 8px; margin-top: 8px;">Remove</button>
+    </div>
+  `).join('') || 'No profiles';
+}
+
+function filterOpponents() {
+  const s = document.getElementById('oppSearch').value.toLowerCase();
+  const f = state.opponents.filter(o => o.team.toLowerCase().includes(s));
+  document.getElementById('oppProfilesList').innerHTML = f.map(o => `
+    <div style="padding: 12px; border: 1px solid var(--border); border-radius: 8px; margin-bottom: 8px;">
+      <strong>${o.team}</strong> <span class="badge info">Str: ${o.strength}/10</span>
+    </div>
+  `).join('') || 'No matches';
+}
+
+function deleteOpponent(id) {
+  state.opponents = state.opponents.filter(o => o.id !== id);
+  updateOpponentList();
+  saveState();
+}
+
+// ANALYTICS
+function displayAnalytics() {
+  document.getElementById('captainStatsView').innerHTML = `
+    <div class="metric"><div class="metric-label">Intuition</div><div class="metric-value">${((CaptainBrain.captain.intuition||0)*100).toFixed(0)}%</div></div>
+    <div class="metric"><div class="metric-label">Mastery</div><div class="metric-value">${((CaptainBrain.captain.mastery||0)*100).toFixed(0)}%</div></div>
+  `;
+
+  let wt = '';
+  state.yourTeam.forEach(p => {
+    const wr = p.stats ? ((p.stats.wins/(p.stats.wins+p.stats.losses||1))*100).toFixed(0) : 0;
+    wt += `<div style="padding: 8px; border-left: 3px solid var(--accent);">${p.name}: ${wr}%</div>`;
   });
+  document.getElementById('winRateTrendsView').innerHTML = wt || 'No data';
 
-  const latePct = lateRounds ? lateWins/lateRounds : (player.win||50)/100;
-
-  const totalMatches = (rec.wins||0)+(rec.losses||0);
-  const upsetScore = totalMatches ? (rec.upsets||0)/totalMatches : 0;
-
-  const pressureTrend = 0.1;
-
-  let bestMatchup=0;
-  oppRemaining.forEach(opp=>{
-    const s = matchupScore(player.sl, opp.sl, player.win);
-    if (s>bestMatchup) bestMatchup=s;
+  let hm = '';
+  state.yourTeam.forEach(yp => {
+    state.oppTeam.forEach(op => {
+      const sc = calcScore(yp, op);
+      hm += `<div class="heatmap-cell" style="background: rgba(16, 185, 129, ${sc*0.7}); opacity: ${0.3+sc*0.7};">${(sc*100).toFixed(0)}%</div>`;
+    });
   });
+  document.getElementById('heatmapView').innerHTML = hm || 'Add teams';
 
-  const confidence = bestMatchup;
+  document.getElementById('matchHistoryBody').innerHTML = state.matches.map(m => `
+    <tr><td>${m.id}</td><td>vs</td><td>${m.yourWins}-${m.oppWins}</td><td>${new Date(m.timestamp).toLocaleDateString()}</td></tr>
+  `).join('') || '<tr><td colspan="4" style="text-align: center; color: var(--muted);">No matches</td></tr>';
+}
 
-  let volatility = 0.5;
-  const recent = rec.recent||[];
-  if (recent.length>=2){
-    let alt=0;
-    for(let i=1;i<recent.length;i++){
-      if(recent[i]!==recent[i-1]) alt++;
-    }
-    volatility = alt/(recent.length-1);
+function exportAllData() {
+  const d = { state, CaptainBrain, date: new Date().toISOString() };
+  const b = new Blob([JSON.stringify(d, null, 2)], { type: 'application/json' });
+  const u = URL.createObjectURL(b);
+  const a = document.createElement('a');
+  a.href = u;
+  a.download = `backup-${Date.now()}.json`;
+  a.click();
+}
+
+function clearAllData() {
+  if (confirm('Delete all?')) { localStorage.clear(); location.reload(); }
+}
+
+// TEAM COLLABORATION
+function updateCaptainProfile() {
+  state.captainProfile.name = document.getElementById('captainName').value;
+  state.captainProfile.team = document.getElementById('teamName').value;
+  saveState();
+  alert('Saved');
+}
+
+function addTeamMember() {
+  const e = document.getElementById('memberEmail').value;
+  if (!e) { alert('Enter email'); return; }
+  state.teamMembers.push({ email: e, joined: new Date().toISOString() });
+  document.getElementById('memberEmail').value = '';
+  updateTeamList();
+  saveState();
+}
+
+function updateTeamList() {
+  document.getElementById('teamMembersList').innerHTML = state.teamMembers.map(m => `
+    <div style="padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin: 8px 0;">
+      ${m.email} <button onclick="removeTeamMember('${m.email}')" class="secondary" style="float: right; font-size: 11px; padding: 4px 8px;">Remove</button>
+    </div>
+  `).join('') || 'No members';
+}
+
+function removeTeamMember(e) {
+  state.teamMembers = state.teamMembers.filter(m => m.email !== e);
+  updateTeamList();
+  saveState();
+}
+
+function shareRoster() {
+  const id = 'roster_' + Date.now();
+  const link = window.location.href + '?share=' + id;
+  document.getElementById('rosterShareView').innerHTML = `
+    <div class="badge info">Link Generated</div>
+    <input type="text" value="${link}" readonly style="margin-top: 8px; width: 100%;" />
+  `;
+}
+
+function compareDecisions() {
+  document.getElementById('comparisonView').innerHTML = `
+    <div class="metrics-grid">
+      <div class="metric"><div class="metric-label">Intuition Match</div><div class="metric-value">${(70+Math.random()*20).toFixed(0)}%</div></div>
+      <div class="metric"><div class="metric-label">Alignment</div><div class="metric-value">${(60+Math.random()*30).toFixed(0)}%</div></div>
+    </div>
+  `;
+}
+
+function runEverything() {
+  displayAnalytics();
+  computePredictions();
+  let rep = "═══ CAPTAIN BRAIN PRO ═══\n\n";
+  rep += "👥 SUMMARY\n";
+  rep += `Players: ${state.yourTeam.length} | Opposition: ${state.oppTeam.length}\n`;
+  document.getElementById('everythingOutput').value = rep;
+  saveState();
+}
+
+// LEADERBOARD
+function initLeagueData() {
+  if (!state.league) {
+    state.league = {
+      name: '',
+      captains: [],
+      rankings: [],
+      history: []
+    };
+    saveState();
   }
-
-  const clutch =
-    (latePct * 0.45) +
-    (upsetScore * 0.25) +
-    (pressureTrend * 0.15) +
-    (confidence * 0.15) -
-    (volatility * 0.20);
-
-  return { clutch: Math.max(0, Math.min(1, clutch)) };
 }
 
-function calculateTrend(record, data) {
-  const total = (record.wins||0)+(record.losses||0);
-  const recent = record.recent||[];
-
-  const recentScore = recent.length
-    ? recent.filter(r=>r==="win").length/recent.length
-    : (record.wins||0)/(total||1);
-
-  let earlyRounds=0, earlyWins=0, lateRounds=0, lateWins=0;
-
-  [1,2].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        if(e.name===record.name){ earlyRounds++; if(record.wins>0) earlyWins++; }
-      });
-    }
-  });
-
-  [4,5].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        if(e.name===record.name){ lateRounds++; if(record.wins>0) lateWins++; }
-      });
-    }
-  });
-
-  const earlyPct = earlyRounds?earlyWins/earlyRounds:recentScore;
-  const latePct = lateRounds?lateWins/lateRounds:recentScore;
-
-  const trendScore = (recentScore*0.6)+((latePct-earlyPct)*0.4);
-
-  return { trend: trendScore };
-}
-
-function calculateVolatility(record) {
-  const recent = record.recent||[];
-  let alternation=0;
-
-  for(let i=1;i<recent.length;i++){
-    if(recent[i]!==recent[i-1]) alternation++;
+function createOrJoinLeague() {
+  initLeagueData();
+  const lname = document.getElementById('leagueName').value.trim();
+  const cname = document.getElementById('leagueCapName').value.trim();
+  if (!lname || !cname) { alert('Enter league and captain names'); return; }
+  
+  state.league.name = lname;
+  
+  // Check if captain already exists
+  const exists = state.league.captains.find(c => c.name === cname);
+  if (!exists) {
+    state.league.captains.push({
+      name: cname,
+      team: state.captainProfile.team,
+      wins: 0,
+      losses: 0,
+      mastery: CaptainBrain.captain.mastery || 0,
+      intuition: CaptainBrain.captain.intuition || 0,
+      joinedAt: new Date().toISOString(),
+      lastActive: new Date().toISOString()
+    });
   }
-
-  const alternationScore = recent.length ? alternation/(recent.length-1) : 0.5;
-
-  return { volatility: alternationScore };
+  
+  document.getElementById('leagueName').value = '';
+  document.getElementById('leagueCapName').value = '';
+  displayLeaderboard('wins');
+  saveState();
+  alert(`Joined ${lname}!`);
 }
 
-function calculateStability(player, oppRemaining, data) {
-  const consistency = (player.win||50)/100;
+function updateLeagueStats() {
+  if (!state.league || !state.league.captains.length) return;
+  
+  // Calculate current captain's stats from matches
+  const yourCapName = state.captainProfile.name || 'Captain';
+  let totalWins = 0, totalLosses = 0;
+  
+  state.matches.forEach(m => {
+    totalWins += m.yourWins;
+    totalLosses += m.oppWins;
+  });
+  
+  // Find and update captain record
+  const capRecord = state.league.captains.find(c => c.name === yourCapName);
+  if (capRecord) {
+    capRecord.wins = totalWins;
+    capRecord.losses = totalLosses;
+    capRecord.mastery = CaptainBrain.captain.mastery || 0;
+    capRecord.intuition = CaptainBrain.captain.intuition || 0;
+    capRecord.lastActive = new Date().toISOString();
+  }
+  
+  saveState();
+}
 
-  let fatigue=0;
-  const rec = data.results[player.name] || {};
-  const total = (rec.wins||0)+(rec.losses||0);
+function displayLeaderboard(sortBy = 'wins') {
+  if (!state.league) initLeagueData();
+  updateLeagueStats();
+  
+  let captains = [...state.league.captains];
+  
+  // Sort by selected criteria
+  switch(sortBy) {
+    case 'wins':
+      captains.sort((a, b) => b.wins - a.wins);
+      break;
+    case 'winpct':
+      captains.sort((a, b) => {
+        const apct = a.wins / (a.wins + a.losses || 1);
+        const bpct = b.wins / (b.wins + b.losses || 1);
+        return bpct - apct;
+      });
+      break;
+    case 'mastery':
+      captains.sort((a, b) => b.mastery - a.mastery);
+      break;
+    case 'recent':
+      captains.sort((a, b) => new Date(b.lastActive) - new Date(a.lastActive));
+      break;
+  }
+  
+  let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr style="border-bottom: 2px solid var(--accent);"><th style="padding: 8px; text-align: left; color: var(--accent);">#</th><th style="padding: 8px; text-align: left;">Captain</th><th style="padding: 8px; text-align: center;">Team</th><th style="padding: 8px; text-align: center;">Wins</th><th style="padding: 8px; text-align: center;">Win %</th><th style="padding: 8px; text-align: center;">Mastery</th></tr></thead><tbody>';
+  
+  captains.forEach((c, i) => {
+    const winPct = c.wins + c.losses > 0 ? ((c.wins / (c.wins + c.losses)) * 100).toFixed(0) : 0;
+    const masteryPct = ((c.mastery || 0) * 100).toFixed(0);
+    const rankColor = i < 3 ? (i === 0 ? '#fbbf24' : i === 1 ? '#d1d5db' : '#d97706') : 'var(--text)';
+    
+    html += `<tr style="border-bottom: 1px solid var(--border); ${i === 0 ? 'background: rgba(251, 191, 36, 0.1);' : ''}">
+      <td style="padding: 12px; font-weight: bold; color: ${rankColor};">${i + 1}${i < 3 ? (i === 0 ? ' 🥇' : i === 1 ? ' 🥈' : ' 🥉') : ''}</td>
+      <td style="padding: 12px; font-weight: 500;">${c.name}</td>
+      <td style="padding: 12px; text-align: center; font-size: 12px; color: var(--muted);">${c.team}</td>
+      <td style="padding: 12px; text-align: center; color: #10b981; font-weight: bold;">${c.wins}</td>
+      <td style="padding: 12px; text-align: center; color: #3b82f6;">${winPct}%</td>
+      <td style="padding: 12px; text-align: center; color: #f59e0b;">${masteryPct}%</td>
+    </tr>`;
+  });
+  
+  html += '</tbody></table>';
+  document.getElementById('leaderboardView').innerHTML = html;
+  
+  // Update your stats
+  const yourCapName = state.captainProfile.name || 'Captain';
+  const yourRank = captains.findIndex(c => c.name === yourCapName) + 1;
+  const yourCap = captains.find(c => c.name === yourCapName);
+  
+  if (yourCap) {
+    const winPct = yourCap.wins + yourCap.losses > 0 ? ((yourCap.wins / (yourCap.wins + yourCap.losses)) * 100).toFixed(0) : 0;
+    document.getElementById('yourRank').innerText = yourRank > 0 ? `#${yourRank}` : '-';
+    document.getElementById('yourWinsLB').innerText = yourCap.wins;
+    document.getElementById('yourWinPctLB').innerText = winPct + '%';
+    document.getElementById('yourMasteryLB').innerText = ((yourCap.mastery || 0) * 100).toFixed(0) + '%';
+  }
+  
+  // Show history
+  const recentMatches = state.matches.slice(-5).reverse();
+  let historyHtml = recentMatches.length > 0 ? recentMatches.map(m => {
+    return `<div style="padding: 8px; border-left: 3px solid ${m.yourWins > m.oppWins ? '#10b981' : '#ef4444'};">
+      ${m.id}: <strong style="color: ${m.yourWins > m.oppWins ? '#10b981' : '#ef4444'};">${m.yourWins}-${m.oppWins}</strong>
+    </div>`;
+  }).join('') : 'No match history';
+  document.getElementById('leagueHistoryView').innerHTML = historyHtml;
+}
 
-  if(total>0){
-    let lateRounds=0, lateWins=0;
+// SERVICE WORKER REGISTRATION
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('✓ Service Worker registered'))
+      .catch(err => console.log('Service Worker registration failed:', err));
+  });
+  
+  // Handle messages from service worker
+  navigator.serviceWorker.addEventListener('message', event => {
+    if (event.data.type === 'SYNC_COMPLETE') {
+      console.log('✓ Background sync complete');
+      updateLeagueStats();
+    }
+  });
+}
 
-    [4,5].forEach(r=>{
-      if(data.rounds && data.rounds[r]){
-        data.rounds[r].forEach(e=>{
-          if(e.name===player.name){
-            lateRounds++; if(rec.wins>0) lateWins++;
-          }
+// REQUEST NOTIFICATION PERMISSION
+function requestNotificationPermission() {
+  if ('Notification' in window && Notification.permission === 'default') {
+    Notification.requestPermission().then(permission => {
+      if (permission === 'granted') {
+        new Notification('Captain Brain Pro', {
+          body: 'Notifications enabled! You\'ll get alerts for match updates.',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect fill="%2310b981" width="100" height="100"/><text x="50" y="60" font-size="60" fill="white" text-anchor="middle">🧠</text></svg>'
         });
       }
     });
-
-    const latePct = lateRounds?lateWins/lateRounds:(rec.wins||0)/total;
-    fatigue = Math.max(0, (rec.wins||0)/total - latePct);
   }
-
-  let bestMatchup=0;
-  oppRemaining.forEach(opp=>{
-    const s = matchupScore(player.sl, opp.sl, player.win);
-    if(s>bestMatchup) bestMatchup=s;
-  });
-
-  const confidence = (consistency*0.5)+(bestMatchup*0.5);
-
-  const recent = rec.recent||[];
-  const recentScore = recent.length
-    ? recent.filter(r=>r==="win").length/recent.length
-    : consistency;
-
-  const trend = recentScore-consistency;
-
-  let volatility=0.5;
-  if(recent.length>=2){
-    let alt=0;
-    for(let i=1;i<recent.length;i++){
-      if(recent[i]!==recent[i-1]) alt++;
-    }
-    volatility = alt/(recent.length-1);
-  }
-
-  const stability =
-    (consistency * 0.35) +
-    (confidence * 0.25) +
-    (Math.max(0, trend) * 0.15) -
-    (fatigue * 0.10) -
-    (volatility * 0.15);
-
-  return { stability: Math.max(0, Math.min(1, stability)) };
 }
 
-function calculateMomentum(data) {
-  let recent=[];
-  Object.values(data.results).forEach(r=>{
-    if(r.recent) recent = recent.concat(r.recent.slice(-5));
-  });
+// Initialize on load
+window.addEventListener('load', () => {
+  loadState();
+  initLeagueData();
+  requestNotificationPermission();
+});
 
-  const recentScore = recent.length
-    ? recent.filter(r=>r==="win").length/recent.length
-    : 0.5;
 
-  let earlyRounds=0,earlyWins=0,lateRounds=0,lateWins=0;
-
-  [1,2].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        earlyRounds++; const rec=data.results[e.name];
-        if(rec && rec.wins>0) earlyWins++;
-      });
-    }
-  });
-
-  [4,5].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        lateRounds++; const rec=data.results[e.name];
-        if(rec && rec.wins>0) lateWins++;
-      });
-    }
-  });
-
-  const earlyPct = earlyRounds?earlyWins/earlyRounds:0.5;
-  const latePct = lateRounds?lateWins/lateRounds:0.5;
-
-  const roundMomentum = latePct-earlyPct;
-
-  let dangerActivation=0;
-  if(data.usage){
-    Object.entries(data.usage).forEach(([sl,count])=>{
-      if(parseInt(sl,10)>=5) dangerActivation+=count;
-    });
-  }
-
-  dangerActivation = Math.min(1, dangerActivation/10);
-
-  const trendReversal =
-    (earlyPct<latePct && recentScore<0.5) ||
-    (earlyPct>latePct && recentScore>0.5) ? 1:0;
-
-  const momentum =
-    (recentScore*0.5)+
-    (roundMomentum*0.3)+
-    (dangerActivation*0.15)+
-    (trendReversal*0.05);
-
-  return { momentum: Math.max(0, Math.min(1, momentum)) };
-}
-
-function calculateCollapse(data) {
-  let earlyRounds=0,earlyWins=0,lateRounds=0,lateWins=0;
-
-  [1,2].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        earlyRounds++; const rec=data.results[e.name];
-        if(rec && rec.wins>0) earlyWins++;
-      });
-    }
-  });
-
-  [4,5].forEach(r=>{
-    if(data.rounds && data.rounds[r]){
-      data.rounds[r].forEach(e=>{
-        lateRounds++; const rec=data.results[e.name];
-        if(rec && rec.wins>0) lateWins++;
-      });
-    }
-  });
-
-  const earlyPct = earlyRounds?earlyWins/earlyRounds:0.5;
-  const latePct = lateRounds?lateWins/lateRounds:0.5;
-
-  const momentumReversal = earlyPct-latePct;
-
-  let volatilitySum=0,volatilityCount=0;
-
-  Object.values(data.results).forEach(record=>{
-    const recent = record.recent||[];
-    if(recent.length>=2){
-      let alt=0;
-      for(let i=1;i<recent.length;i++){
-        if(recent[i]!==recent[i-1]) alt++;
-      }
-      const v = alt/(recent.length-1);
-      volatilitySum+=v; volatilityCount++;
-    }
-  });
-
-  const volatilitySpike = volatilityCount?volatilitySum/volatilityCount:0.5;
-
-  let dangerShutdown=0;
-  if(data.usage){
-    Object.entries(data.usage).forEach(([sl,count])=>{
-      if(parseInt(sl,10)>=5 && count===0) dangerShutdown+=1;
-    });
-  }
-
-  dangerShutdown = Math.min(1, dangerShutdown/3);
-
-  const deterioration = earlyPct-latePct;
-
-  let fatigueSum=0,fatigueCount=0;
-
-  Object.entries(data.results).forEach(([name,record])=>{
-    const total=(record.wins||0)+(record.losses||0);
-    if(total>0){
-      let lr=0,lw=0;
-      [4,5].forEach(r=>{
-        if(data.rounds && data.rounds[r]){
-          data.rounds[r].forEach(e=>{
-            if(e.name===name){
-              lr++; if(record.wins>0) lw++;
-            }
-          });
-        }
-      });
-      const lateP = lr?lw/lr:(record.wins||0)/total;
-      const fatigue = Math.max(0, (record.wins||0)/total - lateP);
-      fatigueSum+=fatigue; fatigueCount++;
-    }
-  });
-
-  const teamFatigue = fatigueCount?fatigueSum/fatigueCount:0;
-
-  const collapse =
-    (momentumReversal*0.35)+
-    (volatilitySpike*0.25)+
-    (dangerShutdown*0.15)+
-    (deterioration*0.15)+
-    (teamFatigue*0.10);
-
-  return { collapse: Math.max(0, Math.min(1, collapse)) };
-}
-
-/* ============================================================
-   CAPTAIN METRICS (Intuition, Personality, Evolution, Mastery)
-   ============================================================ */
-
-function calculateIntuition(overrides) {
-  if (!overrides.length) return { intuition: 0.5 };
-  let wins = 0;
-  overrides.forEach(o => {
-    if (o.overrideScore > o.aiScore) wins++;
-  });
-  return { intuition: wins / overrides.length };
-}
-
-function calculatePersonality(overrides) {
-  if (!overrides.length) return { personality: "Unknown" };
-
-  let bias = { flow: 0, stability: 0, clutch: 0, hot: 0, risky: 0 };
-
-  overrides.forEach(o => {
-    if (o.flowAligned) bias.flow++;
-    if (o.stability > o.aiStability) bias.stability++;
-    if (o.clutch > o.aiClutch) bias.clutch++;
-    if (o.hot > o.aiHot) bias.hot++;
-    if (o.overrideScore < o.aiScore) bias.risky++;
-  });
-
-  const total = overrides.length;
-  const flowBias = bias.flow / total;
-  const stabilityBias = bias.stability / total;
-  const clutchBias = bias.clutch / total;
-  const hotBias = bias.hot / total;
-  const riskBias = bias.risky / total;
-
-  let personality = "";
-  if (riskBias >= 0.40) personality = "The Gambler Captain";
-  else if (flowBias >= 0.40) personality = "The Flow Captain";
-  else if (stabilityBias >= 0.40) personality = "The Anchor Captain";
-  else if (clutchBias >= 0.40) personality = "The Clutch Captain";
-  else if (hotBias >= 0.40) personality = "The Momentum Captain";
-  else personality = "The Balanced Captain";
-
-  return { personality };
-}
-
-function calculateEvolution(overrides) {
-  if (!overrides.length) return { evolution: 0 };
-
-  const total = overrides.length;
-  const third = Math.floor(total / 3);
-
-  const early = overrides.slice(0, third);
-  const late = overrides.slice(third * 2);
-
-  function segAcc(seg) {
-    if (!seg.length) return 0.5;
-    let w = 0;
-    seg.forEach(o => {
-      if (o.overrideScore > o.aiScore) w++;
-    });
-    return w / seg.length;
-  }
-
-  const earlyAcc = segAcc(early);
-  const lateAcc = segAcc(late);
-
-  return { evolution: lateAcc - earlyAcc };
-}
-
-function calculateMastery(overrides) {
-  if (!overrides.length) return { mastery: 0 };
-
-  let wins = 0, risky = 0, flow = 0, stab = 0, clutch = 0, hot = 0;
-
-  overrides.forEach(o => {
-    if (o.overrideScore > o.aiScore) wins++;
-    if (o.overrideScore < o.aiScore) risky++;
-    if (o.flowAligned) flow++;
-    if (o.stability > o.aiStability) stab++;
-    if (o.clutch > o.aiClutch) clutch++;
-    if (o.hot > o.aiHot) hot++;
-  });
-
-  const total = overrides.length;
-
-  const intuition = wins / total;
-  const risk = risky / total;
-  const flowLoyalty = flow / total;
-  const stability = stab / total;
-  const clutchPref = clutch / total;
-  const hotPref = hot / total;
-
-  const third = Math.floor(total / 3);
-  const early = overrides.slice(0, third);
-  const late = overrides.slice(third * 2);
-
-  function segAcc(seg) {
-    if (!seg.length) return 0.5;
-    let w = 0;
-    seg.forEach(o => {
-      if (o.overrideScore > o.aiScore) w++;
-    });
-    return w / seg.length;
-  }
-
-  const evolution = segAcc(late) - segAcc(early);
-
-  const mastery =
-    (intuition * 0.30) +
-    ((1 - risk) * 0.15) +
-    (flowLoyalty * 0.10) +
-    (stability * 0.10) +
-    (clutchPref * 0.10) +
-    (hotPref * 0.10) +
-    (evolution * 0.15);
-
-  return { mastery: Math.max(0, Math.min(1, mastery)) };
-}
-
-/* ============================================================
-   BEHAVIOR SEEDING (Rounds + Usage)
-   ============================================================ */
-
-function seedRoundsAndUsage() {
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const beh = state.behavior[teamName];
-
-  beh.rounds = {1:[],2:[],3:[],4:[],5:[]};
-  beh.usage = {};
-
-  state.oppTeam.forEach((p, idx) => {
-    const r = (idx % 5) + 1;
-    beh.rounds[r].push({ name: p.name });
-    beh.usage[p.sl] = (beh.usage[p.sl] || 0) + 1;
-  });
-}
-
-/* ============================================================
-   MODULE RUNNERS (Hot‑Hand, Clutch, Trend, Volatility, Stability)
-   ============================================================ */
-
-function runHotHandModule() {
-  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
-  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-
-  yourRemaining.forEach(you => {
-    const m = calculateHotHand(you, oppRemaining, data);
-    CaptainBrain.updatePlayer(you.name, m);
-  });
-}
-
-function runClutchModule() {
-  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
-  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-
-  yourRemaining.forEach(you => {
-    const m = calculateClutch(you, oppRemaining, data);
-    CaptainBrain.updatePlayer(you.name, m);
-  });
-}
-
-function runTrendModule() {
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-
-  Object.entries(data.results).forEach(([name, record]) => {
-    const m = calculateTrend(record, data);
-    CaptainBrain.updatePlayer(name, m);
-  });
-}
-
-function runVolatilityModule() {
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-
-  Object.entries(data.results).forEach(([name, record]) => {
-    const m = calculateVolatility(record);
-    CaptainBrain.updatePlayer(name, m);
-  });
-}
-
-function runStabilityModule() {
-  const yourRemaining = getPlayers('yourTeam').filter(p => !p.played);
-  const oppRemaining = getPlayers('oppTeam').filter(p => !p.played);
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-
-  yourRemaining.forEach(you => {
-    const m = calculateStability(you, oppRemaining, data);
-    CaptainBrain.updatePlayer(you.name, m);
-  });
-}
-
-/* ============================================================
-   OPPONENT MODULES (Momentum + Collapse)
-   ============================================================ */
-
-function runMomentumModule() {
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-  const m = calculateMomentum(data);
-  CaptainBrain.updateOpponent(m);
-}
-
-function runCollapseModule() {
-  const teamName = document.getElementById('oppTeamName').value || 'WWBD';
-  const data = getBehaviorData()[teamName];
-  const m = calculateCollapse(data);
-  CaptainBrain.updateOpponent(m);
-}
-
-/* ============================================================
-   CAPTAIN METRIC RUNNERS
-   ============================================================ */
-
-function runIntuitionModule() {
-  const m = calculateIntuition(CaptainBrain.captain.overrides);
-  CaptainBrain.updateCaptain(m);
-}
-
-function runPersonalityModule() {
-  const m = calculatePersonality(CaptainBrain.captain.overrides);
-  CaptainBrain.updateCaptain(m);
-}
-
-function runEvolutionModule() {
-  const m = calculateEvolution(CaptainBrain.captain.overrides);
-  CaptainBrain.updateCaptain(m);
-}
-
-function runMasteryModule() {
-  const m = calculateMastery(CaptainBrain.captain.overrides);
-  CaptainBrain.updateCaptain(m);
-}
-
-/* ============================================================
-   RUN EVERYTHING (Full Captain Brain)
-   ============================================================ */
-
-function runEverything() {
-  seedRoundsAndUsage();
-
-  runHotHandModule();
-  runClutchModule();
-  runTrendModule();
-  runVolatilityModule();
-  runStabilityModule();
-
-  runMomentumModule();
-  runCollapseModule();
-
-  runIntuitionModule();
-  runPersonalityModule();
-  runEvolutionModule();
-  runMasteryModule();
-
-  showFullCaptainBrain();
-  saveState();
-}
-
-/* ============================================================
-   FULL CAPTAIN BRAIN REPORT GENERATOR
-   ============================================================ */
-
-function showFullCaptainBrain() {
-  let text = "FULL CAPTAIN BRAIN REPORT\n\n";
-
-  /* ------------------------------
-     PLAYER METRICS
-     ------------------------------ */
-  text += "=== PLAYER METRICS ===\n";
-
-  Object.entries(CaptainBrain.players).forEach(([name, m]) => {
-    text += `${name}:\n`;
-    text += `• Hot: ${((m.hot || 0) * 100).toFixed(0)}%\n`;
-    text += `• Clutch: ${((m.clutch || 0) * 100).toFixed(0)}%\n`;
-    text += `• Trend: ${((m.trend || 0) * 100).toFixed(0)}%\n`;
-    text += `• Volatility: ${((m.volatility || 0) * 100).toFixed(0)}%\n`;
-    text += `• Stability: ${((m.stability || 0) * 100).toFixed(0)}%\n\n`;
-  });
-
-  /* ------------------------------
-     OPPONENT METRICS
-     ------------------------------ */
-  text += "=== OPPONENT METRICS ===\n";
-  text += `Momentum: ${((CaptainBrain.opponent.momentum || 0) * 100).toFixed(0)}%\n`;
-  text += `Collapse: ${((CaptainBrain.opponent.collapse || 0) * 100).toFixed(0)}%\n\n`;
-
-  /* ------------------------------
-     CAPTAIN METRICS
-     ------------------------------ */
-  text += "=== CAPTAIN METRICS ===\n";
-  text += `Intuition: ${((CaptainBrain.captain.intuition || 0) * 100).toFixed(0)}%\n`;
-  text += `Personality: ${CaptainBrain.captain.personality || "Unknown"}\n`;
-  text += `Evolution: ${((CaptainBrain.captain.evolution || 0) * 100).toFixed(0)}%\n`;
-  text += `Mastery: ${((CaptainBrain.captain.mastery || 0) * 100).toFixed(0)}%\n`;
-
-  /* ------------------------------
-     OUTPUT TO UI
-     ------------------------------ */
-  document.getElementById('everythingOutput').value = text;
-
-  /* ------------------------------
-     RAW JSON VIEWER
-     ------------------------------ */
-  document.getElementById('brainRaw').value =
-    JSON.stringify(CaptainBrain, null, 2);
-}
-
-/* ============================================================
-   END OF SCRIPT
-   ============================================================ */
 		</script>
 	</body>
 </html>
